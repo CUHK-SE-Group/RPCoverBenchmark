@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package ecommerce.product;
+
+option java_package = "com.example.ecommerce.product";
+option java_outer_classname = "ProductProto";
+import "google/protobuf/timestamp.proto";
+
+// 定义 SKU 消息类型
+message SKU {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  int32 quantity = 5;
+  repeated string images = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// SKU 创建请求消息类型
+message CreateSKURequest {
+  string name = 1;
+  string description = 2;
+  float price = 3;
+  int32 quantity = 4;
+  repeated string images = 5;
+}
+
+// SKU 创建响应消息类型
+message CreateSKUResponse {
+  string sku_id = 1;
+}
+
+// SKU 获取请求消息类型
+message GetSKURequest {
+  string sku_id = 1;
+}
+
+// SKU 获取响应消息类型
+message GetSKUResponse {
+  SKU sku = 1;
+}
+
+// SKU 更新请求消息类型
+message UpdateSKURequest {
+  string sku_id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  int32 quantity = 5;
+  repeated string images = 6;
+}
+
+// SKU 更新响应消息类型
+message UpdateSKUResponse {
+  bool success = 1;
+}
+
+// SKU 删除请求消息类型
+message DeleteSKURequest {
+  string sku_id = 1;
+}
+
+// SKU 删除响应消息类型
+message DeleteSKUResponse {
+  bool success = 1;
+}
+
+// 定义商品中心服务接口
+service ProductService {
+  rpc CreateSKU(CreateSKURequest) returns (CreateSKUResponse) {}
+  rpc GetSKU(GetSKURequest) returns (GetSKUResponse) {}
+  rpc UpdateSKU(UpdateSKURequest) returns (UpdateSKUResponse) {}
+  rpc DeleteSKU(DeleteSKURequest) returns (DeleteSKUResponse) {}
+}

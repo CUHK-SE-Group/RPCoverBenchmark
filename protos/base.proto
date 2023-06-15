@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package mypackage;
+
+option java_package = "com.example.package";
+option java_outer_classname = "MyProto";
+
+// 定义消息类型
+message Person {
+  string name = 1;
+  int32 age = 2;
+  repeated string hobbies = 3;
+  Status status = 4;
+  MyMessage message = 5;
+}
+
+// 定义服务接口
+service MyService {
+  rpc GetData (GetDataRequest) returns (GetDataResponse) {}
+}
+
+message GetDataRequest {
+  string query = 1;
+}
+
+message GetDataResponse {
+  repeated Result results = 1;
+
+  message Result {
+    string id = 1;
+    string data = 2;
+  }
+}
+
+// 定义枚举类型
+enum Status {
+  OK = 0;
+  ERROR = 1;
+}
+
+// 使用 oneof 定义联合类型
+message MyMessage {
+  oneof data {
+    string name = 1;
+    int32 age = 2;
+    bool active = 3;
+  }
+}
+
+// 使用嵌套消息类型
+message Outer {
+  message Inner {
+    string message = 1;
+  }
+
+  Inner inner_message = 1;
+}
+
