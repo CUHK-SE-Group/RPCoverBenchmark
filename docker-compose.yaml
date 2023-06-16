@@ -1,0 +1,9 @@
+version: "3"
+services:
+  go_a:
+    build: ./Go_A
+    networks:
+      - rpcover
+    entrypoint: [ "./server"]
+networks:
+  rpcover:

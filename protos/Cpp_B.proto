@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package protos;
+option go_package = "./proto";
+
+import "protos/message.proto";
+
+// 定义交易履约系统服务接口
+service Cpp_B {
+  rpc Cpp_B_1(CommonMessage) returns (CommonMessage) {}
+  rpc Cpp_B_2(CommonMessage) returns (CommonMessage) {}
+  rpc Cpp_B_3(CommonMessage) returns (CommonMessage) {}
+}
