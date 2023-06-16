@@ -5,6 +5,7 @@ package ecommerce.user;
 option java_package = "com.example.ecommerce.user";
 option java_outer_classname = "UserProto";
 import "google/protobuf/timestamp.proto";
+option go_package = "./proto";
 
 // 定义用户信息消息类型
 message User {
@@ -29,9 +30,7 @@ message RegisterUserRequest {
 }
 
 // 用户注册响应消息类型
-message RegisterUserResponse {
-  string user_id = 1;
-}
+message RegisterUserResponse { string user_id = 1; }
 
 // 用户登录请求消息类型
 message LoginUserRequest {
@@ -40,19 +39,13 @@ message LoginUserRequest {
 }
 
 // 用户登录响应消息类型
-message LoginUserResponse {
-  string token = 1;
-}
+message LoginUserResponse { string token = 1; }
 
 // 用户获取信息请求消息类型
-message GetUserRequest {
-  string user_id = 1;
-}
+message GetUserRequest { string user_id = 1; }
 
 // 用户获取信息响应消息类型
-message GetUserResponse {
-  User user = 1;
-}
+message GetUserResponse { User user = 1; }
 
 // 用户更新信息请求消息类型
 message UpdateUserRequest {
@@ -63,19 +56,13 @@ message UpdateUserRequest {
 }
 
 // 用户更新信息响应消息类型
-message UpdateUserResponse {
-  bool success = 1;
-}
+message UpdateUserResponse { bool success = 1; }
 
 // 用户删除请求消息类型
-message DeleteUserRequest {
-  string user_id = 1;
-}
+message DeleteUserRequest { string user_id = 1; }
 
 // 用户删除响应消息类型
-message DeleteUserResponse {
-  bool success = 1;
-}
+message DeleteUserResponse { bool success = 1; }
 
 // 定义用户管理服务接口
 service UserService {
