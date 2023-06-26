@@ -6,8 +6,7 @@ from protos import message_pb2 as protos_dot_message__pb2
 
 
 class Cpp_AStub(object):
-    """定义交易履约系统服务接口
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -33,8 +32,7 @@ class Cpp_AStub(object):
 
 
 class Cpp_AServicer(object):
-    """定义交易履约系统服务接口
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def Cpp_A_1(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -80,8 +78,7 @@ def add_Cpp_AServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Cpp_A(object):
-    """定义交易履约系统服务接口
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def Cpp_A_1(request,

@@ -6,8 +6,7 @@ from protos import message_pb2 as protos_dot_message__pb2
 
 
 class Ts_BStub(object):
-    """定义交易履约系统服务接口
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -33,8 +32,7 @@ class Ts_BStub(object):
 
 
 class Ts_BServicer(object):
-    """定义交易履约系统服务接口
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def Ts_B_1(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -80,8 +78,7 @@ def add_Ts_BServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Ts_B(object):
-    """定义交易履约系统服务接口
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def Ts_B_1(request,

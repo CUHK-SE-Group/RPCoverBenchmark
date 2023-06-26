@@ -5,7 +5,6 @@ option go_package = "./proto";
 
 import "protos/message.proto";
 
-// 定义交易履约系统服务接口
 service Cpp_A {
   rpc Cpp_A_1(CommonMessage) returns (CommonMessage) {}
   rpc Cpp_A_2(CommonMessage) returns (CommonMessage) {}

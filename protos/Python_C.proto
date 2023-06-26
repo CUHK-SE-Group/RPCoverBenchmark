@@ -5,7 +5,6 @@ option go_package = "./proto";
 import "protos/message.proto";
 
 
-// 定义交易履约系统服务接口
 service Python_C {
   rpc Python_C_1(CommonMessage) returns (CommonMessage) {}
   rpc Python_C_2(CommonMessage) returns (CommonMessage) {}

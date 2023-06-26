@@ -5,7 +5,6 @@ option go_package = "./proto";
 import "protos/message.proto";
 
 
-// 定义交易履约系统服务接口
 service Ts_C {
   rpc Ts_C_1(CommonMessage) returns (CommonMessage) {}
   rpc Ts_C_2(CommonMessage) returns (CommonMessage) {}

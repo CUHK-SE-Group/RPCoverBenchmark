@@ -3,7 +3,6 @@ package protos;
 import "protos/message.proto";
 option go_package = "./proto";
 
-// 定义交易履约系统服务接口
 service Java_B {
   rpc Java_B_1(CommonMessage) returns (CommonMessage) {}
   rpc Java_B_2(CommonMessage) returns (CommonMessage) {}
