@@ -9,11 +9,11 @@ import grpc
 import random
 
 
-class Python_A(Python_AServicer):
+class Python_B(Python_BServicer):
     def __init__(self):
         self.cnt = 0
 
-    def Python_A_1(self, request: CommonMessage, context):
+    def Python_B_1(self, request: CommonMessage, context):
         try:
             self.cnt += 1
             print(
@@ -25,20 +25,19 @@ class Python_A(Python_AServicer):
                 if choice % 100 == 0:
                     request.call_stack = request.call_stack[:-1]
                     raise Exception("fail")
-            self.Python_A_2(request, context)
-            with grpc.insecure_channel('python_b:8080') as channel:
-                stub = Python_BStub(channel)
-                stub.Python_B_1(request)
+
             with grpc.insecure_channel('python_c:8080') as channel:
                 stub = Python_CStub(channel)
                 stub.Python_C_1(request)
+                stub.Python_C_2(request)
+                stub.Python_C_3(request)
             return request
         except Exception as e:
             print(e, request.call_stack)
             request.call_stack = request.call_stack[:-1]
             return request
 
-    def Python_A_2(self, request: CommonMessage, context):
+    def Python_B_2(self, request: CommonMessage, context):
         try:
             self.cnt += 1
             print(
@@ -51,24 +50,20 @@ class Python_A(Python_AServicer):
                     request.call_stack = request.call_stack[:-1]
                     raise Exception("fail")
 
-            with grpc.insecure_channel('python_b:8080') as channel:
-                stub = Python_BStub(channel)
-                stub.Python_B_2(request)
-
             with grpc.insecure_channel('python_c:8080') as channel:
                 stub = Python_CStub(channel)
+                stub.Python_C_3(request)
                 stub.Python_C_2(request)
-
             with grpc.insecure_channel('java_a:8080') as channel:
                 stub = Java_AStub(channel)
-                stub.Java_A_1(request)
+                stub.Java_A_3(request)
             return request
         except Exception as e:
             print(e, request.call_stack)
             request.call_stack = request.call_stack[:-1]
             return request
 
-    def Python_A_3(self, request: CommonMessage, context):
+    def Python_B_3(self, request: CommonMessage, context):
         try:
             self.cnt += 1
             print(
@@ -80,14 +75,10 @@ class Python_A(Python_AServicer):
                 if choice % 100 == 0:
                     request.call_stack = request.call_stack[:-1]
                     raise Exception("fail")
-            with grpc.insecure_channel('python_b:8080') as channel:
-                stub = Python_BStub(channel)
-                stub.Python_B_1(request)
-
+            self.Python_B_1(request, context)
             with grpc.insecure_channel('python_c:8080') as channel:
                 stub = Python_CStub(channel)
                 stub.Python_C_1(request)
-
             with grpc.insecure_channel('python_b:8080') as channel:
                 stub = Python_BStub(channel)
                 stub.Python_B_2(request)
@@ -100,7 +91,7 @@ class Python_A(Python_AServicer):
 
 if __name__ == '__main__':
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    add_Python_AServicer_to_server(Python_A(), server)
-    server.add_insecure_port('[::]:8324')
+    add_Python_BServicer_to_server(Python_B(), server)
+    server.add_insecure_port('[::]:8080')
     server.start()
     server.wait_for_termination()
