@@ -4,6 +4,29 @@ services:
     build: ./Go_A
     networks:
       - rpcover
-    entrypoint: [ "./server"]
+    entrypoint: [ "./server" ]
+  go_b:
+    build: ./Go_B
+    networks:
+      - rpcover
+    entrypoint: [ "./server" ]
+  go_c:
+    build: ./Go_C
+    networks:
+      - rpcover
+    entrypoint: [ "./server" ]
+
+  python_a:
+    build: ./Python_A
+    networks:
+      - rpcover
+  python_b:
+    build: ./Python_B
+    networks:
+      - rpcover
+  python_c:
+    build: ./Python_A
+    networks:
+      - rpcover
 networks:
   rpcover:

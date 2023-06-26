@@ -23,7 +23,7 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	defer func() {
 		s.cnt++
 	}()
-	log.Println("Go_A_1 called by %s", message.GetMyString())
+	log.Printf("Go_A_1 called by %s\n", message.GetMyString())
 	message.MyString = "Go_A_1"
 	message.CallStack = append(message.CallStack, "Go_A_1")
 	if s.cnt > 1000 {
@@ -46,7 +46,7 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("go_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewGo_BClient(conn)
@@ -60,7 +60,7 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("cpp_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewCpp_BClient(conn)
@@ -74,7 +74,7 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("cpp_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewCpp_CClient(conn)
@@ -88,7 +88,7 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("ts_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewTs_BClient(conn)
@@ -106,7 +106,7 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("ts_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewTs_CClient(conn)
@@ -125,7 +125,7 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	defer func() {
 		s.cnt++
 	}()
-	log.Println("Go_A_2 called by %s", message.GetMyString())
+	log.Printf("Go_A_2 called by %s\n", message.GetMyString())
 	message.MyString = "Go_A_2"
 	message.CallStack = append(message.CallStack, "Go_A_2")
 	if s.cnt > 1000 {
@@ -140,7 +140,7 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewGo_CClient(conn)
@@ -158,7 +158,7 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("go_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewGo_BClient(conn)
@@ -172,7 +172,7 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("java_a:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewJava_AClient(conn)
@@ -186,7 +186,7 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("ts_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewTs_CClient(conn)
@@ -205,7 +205,7 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	defer func() {
 		s.cnt++
 	}()
-	log.Println("Go_A_3 called by %s", message.GetMyString())
+	log.Printf("Go_A_3 called by %s\n", message.GetMyString())
 	message.MyString = "Go_A_3"
 	message.CallStack = append(message.CallStack, "Go_A_3")
 	if s.cnt > 1000 {
@@ -220,7 +220,7 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("go_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewGo_BClient(conn)
@@ -240,7 +240,7 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewGo_CClient(conn)
@@ -254,7 +254,7 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("java_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewJava_BClient(conn)
@@ -268,7 +268,7 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	{
 		conn, err := grpc.Dial("cpp_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Println("did not connect: %v", err)
+			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
 		c := pb.NewCpp_CClient(conn)
