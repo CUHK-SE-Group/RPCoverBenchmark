@@ -5,5 +5,15 @@ services:
     networks:
       - rpcover
     entrypoint: [ "./server"]
+  go_b:
+    build: ./Go_B
+    networks:
+      - rpcover
+    entrypoint: [ "./server" ]
+  go_c:
+    build: ./Go_C
+    networks:
+      - rpcover
+    entrypoint: [ "./server" ]
 networks:
   rpcover:

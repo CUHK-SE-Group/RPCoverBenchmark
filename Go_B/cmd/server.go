@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "Go_A/proto"
+	pb "Go_B/proto"
 	"context"
 	"errors"
 	"flag"
@@ -10,22 +10,28 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"runtime"
 	"time"
 )
 
-// server is used to implement helloworld.GreeterServer.
+func getCurrentFunctionName() string {
+	pc, _, _, _ := runtime.Caller(1)
+	function := runtime.FuncForPC(pc)
+	return function.Name()
+}
+
 type server struct {
-	pb.UnimplementedGo_AServer
+	pb.UnimplementedGo_BServer
 	cnt int
 }
 
-func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.CommonMessage, error) {
+func (s *server) Go_B_1(ctx context.Context, message *pb.CommonMessage) (*pb.CommonMessage, error) {
 	defer func() {
 		s.cnt++
 	}()
-	log.Printf("Go_A_1 called by %s\n", message.GetMyString())
-	message.MyString = "Go_A_1"
-	message.CallStack = append(message.CallStack, "Go_A_1")
+	log.Printf("%s called by %s\n", getCurrentFunctionName(), message.GetMyString())
+	message.MyString = getCurrentFunctionName()
+	message.CallStack = append(message.CallStack, getCurrentFunctionName())
 	if s.cnt > 1000 {
 		choice := rand.Int()
 		if choice%100 == 0 {
@@ -33,54 +39,38 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 			return nil, errors.New("fail")
 		}
 	}
-
-	// function calls
-	if _, err := s.Go_A_2(ctx, message); err != nil {
-		message.CallStack = message.CallStack[:len(message.CallStack)-1]
-		return nil, err
-	}
-	if _, err := s.Go_A_3(ctx, message); err != nil {
-		message.CallStack = message.CallStack[:len(message.CallStack)-1]
-		return nil, err
-	}
 	{
-		conn, err := grpc.Dial("go_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
-		c := pb.NewGo_BClient(conn)
+		c := pb.NewGo_CClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		if _, err := c.Go_B_1(ctx, message); err != nil {
+		if _, err := c.Go_C_3(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
 	}
+	if _, err := s.Go_B_2(ctx, message); err != nil {
+		message.CallStack = message.CallStack[:len(message.CallStack)-1]
+		return nil, err
+	}
 	{
-		conn, err := grpc.Dial("cpp_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
-		c := pb.NewCpp_BClient(conn)
+		c := pb.NewGo_CClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		if _, err := c.Cpp_B_3(ctx, message); err != nil {
+		if _, err := c.Go_C_2(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
-	}
-	{
-		conn, err := grpc.Dial("cpp_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Printf("did not connect: %v\n", err)
-		}
-		defer conn.Close()
-		c := pb.NewCpp_CClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		if _, err := c.Cpp_C_2(ctx, message); err != nil {
+		if _, err := c.Go_C_1(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
@@ -95,10 +85,6 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 		if _, err := c.Ts_B_1(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
-		if _, err := c.Ts_B_3(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
@@ -121,13 +107,13 @@ func (s *server) Go_A_1(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	return message, nil
 }
 
-func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.CommonMessage, error) {
+func (s *server) Go_B_2(ctx context.Context, message *pb.CommonMessage) (*pb.CommonMessage, error) {
 	defer func() {
 		s.cnt++
 	}()
-	log.Printf("Go_A_2 called by %s\n", message.GetMyString())
-	message.MyString = "Go_A_2"
-	message.CallStack = append(message.CallStack, "Go_A_2")
+	log.Printf("%s called by %s\n", getCurrentFunctionName(), message.GetMyString())
+	message.MyString = getCurrentFunctionName()
+	message.CallStack = append(message.CallStack, getCurrentFunctionName())
 	if s.cnt > 1000 {
 		choice := rand.Int()
 		if choice%100 == 0 {
@@ -135,8 +121,6 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 			return nil, errors.New("fail")
 		}
 	}
-
-	// function calls
 	{
 		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
@@ -146,96 +130,14 @@ func (s *server) Go_A_2(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 		c := pb.NewGo_CClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		if _, err := c.Go_C_1(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
 		if _, err := c.Go_C_2(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
 	}
-	{
-		conn, err := grpc.Dial("go_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Printf("did not connect: %v\n", err)
-		}
-		defer conn.Close()
-		c := pb.NewGo_BClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		if _, err := c.Go_B_3(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
-	}
-	{
-		conn, err := grpc.Dial("java_a:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Printf("did not connect: %v\n", err)
-		}
-		defer conn.Close()
-		c := pb.NewJava_AClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		if _, err := c.Java_A_1(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
-	}
-	{
-		conn, err := grpc.Dial("ts_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Printf("did not connect: %v\n", err)
-		}
-		defer conn.Close()
-		c := pb.NewTs_CClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		if _, err := c.Ts_C_1(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
-	}
-	message.CallStack = message.CallStack[:len(message.CallStack)-1]
-	return message, nil
-}
-
-func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.CommonMessage, error) {
-	defer func() {
-		s.cnt++
-	}()
-	log.Printf("Go_A_3 called by %s\n", message.GetMyString())
-	message.MyString = "Go_A_3"
-	message.CallStack = append(message.CallStack, "Go_A_3")
-	if s.cnt > 1000 {
-		choice := rand.Int()
-		if choice%100 == 0 {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, errors.New("fail")
-		}
-	}
-
-	// function calls
-	{
-		conn, err := grpc.Dial("go_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		if err != nil {
-			log.Printf("did not connect: %v\n", err)
-		}
-		defer conn.Close()
-		c := pb.NewGo_BClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		if _, err := c.Go_B_2(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
-	}
-	{
-		if _, err := s.Go_A_2(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
+	if _, err := s.Go_B_3(ctx, message); err != nil {
+		message.CallStack = message.CallStack[:len(message.CallStack)-1]
+		return nil, err
 	}
 	{
 		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -252,33 +154,29 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 		}
 	}
 	{
-		conn, err := grpc.Dial("java_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial("java_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
-		c := pb.NewJava_BClient(conn)
+		c := pb.NewJava_CClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		if _, err := c.Java_B_2(ctx, message); err != nil {
+		if _, err := c.Java_C_3(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
 	}
 	{
-		conn, err := grpc.Dial("cpp_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial("cpp_a:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Printf("did not connect: %v\n", err)
 		}
 		defer conn.Close()
-		c := pb.NewCpp_CClient(conn)
+		c := pb.NewCpp_AClient(conn)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		if _, err := c.Cpp_C_3(ctx, message); err != nil {
-			message.CallStack = message.CallStack[:len(message.CallStack)-1]
-			return nil, err
-		}
-		if _, err := c.Cpp_C_2(ctx, message); err != nil {
+		if _, err := c.Cpp_A_3(ctx, message); err != nil {
 			message.CallStack = message.CallStack[:len(message.CallStack)-1]
 			return nil, err
 		}
@@ -287,6 +185,94 @@ func (s *server) Go_A_3(ctx context.Context, message *pb.CommonMessage) (*pb.Com
 	return message, nil
 }
 
+func (s *server) Go_B_3(ctx context.Context, message *pb.CommonMessage) (*pb.CommonMessage, error) {
+	defer func() {
+		s.cnt++
+	}()
+	log.Println("%s called by %s", getCurrentFunctionName(), message.GetMyString())
+	message.MyString = getCurrentFunctionName()
+	message.CallStack = append(message.CallStack, getCurrentFunctionName())
+	if s.cnt > 1000 {
+		choice := rand.Int()
+		if choice%100 == 0 {
+			message.CallStack = message.CallStack[:len(message.CallStack)-1]
+			return nil, errors.New("fail")
+		}
+	}
+
+	{
+		conn, err := grpc.Dial("go_c:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("did not connect: %v\n", err)
+		}
+		defer conn.Close()
+		c := pb.NewGo_CClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if _, err := c.Go_C_3(ctx, message); err != nil {
+			message.CallStack = message.CallStack[:len(message.CallStack)-1]
+			return nil, err
+		}
+	}
+	{
+		conn, err := grpc.Dial("ts_a:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("did not connect: %v\n", err)
+		}
+		defer conn.Close()
+		c := pb.NewTs_AClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if _, err := c.Ts_A_2(ctx, message); err != nil {
+			message.CallStack = message.CallStack[:len(message.CallStack)-1]
+			return nil, err
+		}
+	}
+	{
+		conn, err := grpc.Dial("ts_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("did not connect: %v\n", err)
+		}
+		defer conn.Close()
+		c := pb.NewTs_BClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if _, err := c.Ts_B_1(ctx, message); err != nil {
+			message.CallStack = message.CallStack[:len(message.CallStack)-1]
+			return nil, err
+		}
+	}
+	{
+		conn, err := grpc.Dial("ts_a:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("did not connect: %v\n", err)
+		}
+		defer conn.Close()
+		c := pb.NewTs_AClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if _, err := c.Ts_A_3(ctx, message); err != nil {
+			message.CallStack = message.CallStack[:len(message.CallStack)-1]
+			return nil, err
+		}
+	}
+	{
+		conn, err := grpc.Dial("cpp_b:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Printf("did not connect: %v\n", err)
+		}
+		defer conn.Close()
+		c := pb.NewCpp_BClient(conn)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if _, err := c.Cpp_B_2(ctx, message); err != nil {
+			message.CallStack = message.CallStack[:len(message.CallStack)-1]
+			return nil, err
+		}
+	}
+	message.CallStack = message.CallStack[:len(message.CallStack)-1]
+	return message, nil
+}
 func main() {
 
 	flag.Parse()
@@ -295,7 +281,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterGo_AServer(s, &server{})
+	pb.RegisterGo_BServer(s, &server{})
 	log.Printf("server listening at %v", "8080")
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
