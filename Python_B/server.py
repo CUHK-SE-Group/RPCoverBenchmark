@@ -1,5 +1,4 @@
 import inspect
-from protos.Python_A_pb2_grpc import *
 from protos.Python_B_pb2_grpc import *
 from protos.Python_C_pb2_grpc import *
 from protos.Java_A_pb2_grpc import *

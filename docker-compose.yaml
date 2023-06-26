@@ -17,7 +17,15 @@ services:
     entrypoint: [ "./server" ]
 
   python_a:
-    build: ./python_a
+    build: ./Python_A
+    networks:
+      - rpcover
+  python_b:
+    build: ./Python_B
+    networks:
+      - rpcover
+  python_c:
+    build: ./Python_A
     networks:
       - rpcover
 networks:
