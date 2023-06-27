@@ -3,6 +3,7 @@
 PROTOC_GEN_GO=$(which protoc-gen-go)
 PROTOC_GEN_GO_GRPC=$(which protoc-gen-go-grpc)
 PROTOC_GEN_PY_GRPC=$(which grpc_python_plugin)
+PROTOC_GEN_CPP_GRPC=$(which grpc_cpp_plugin)
 PROTO_DIR=protos
 GO_OUT_DIRS=(Go_A Go_B Go_C Cpp_A Cpp_B Cpp_C Java_A Java_B Java_C Ts_A Ts_B Ts_C Python_A Python_B Python_C)
 
@@ -16,4 +17,5 @@ for dir in "${GO_OUT_DIRS[@]}"; do
   protoc --python_out=Python_A --python-grpc_out=Python_A --pyi_out=Python_A --plugin=protoc-gen-python-grpc=$PROTOC_GEN_PY_GRPC $PROTO_DIR/*.proto
   protoc --python_out=Python_B --python-grpc_out=Python_B --pyi_out=Python_B --plugin=protoc-gen-python-grpc=$PROTOC_GEN_PY_GRPC $PROTO_DIR/*.proto
   protoc --python_out=Python_C --python-grpc_out=Python_C --pyi_out=Python_C --plugin=protoc-gen-python-grpc=$PROTOC_GEN_PY_GRPC $PROTO_DIR/*.proto
+  protoc --cpp_out=Cpp_A --grpc_out=Cpp_A --plugin=protoc-gen-grpc=$PROTOC_GEN_CPP_GRPC $PROTO_DIR/*.proto
 done
