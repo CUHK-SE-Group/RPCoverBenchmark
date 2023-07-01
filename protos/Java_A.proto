@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package protos;
 option go_package = "./proto";
+option java_package = "src.main.benchmark";
 
 import "protos/message.proto";
 
