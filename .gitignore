@@ -1,3 +1,8 @@
 .vscode
 .idea
+<<<<<<< Updated upstream
 bazel-*
+=======
+node_modules
+*.lsif
+>>>>>>> Stashed changes
