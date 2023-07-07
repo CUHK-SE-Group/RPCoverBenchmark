@@ -1,18 +1,5 @@
-load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
-load("@rules_java//java:defs.bzl", "java_proto_library")
-
-java_grpc_library(
-    name = "java_grpc",
-    srcs = [":benchmark_proto"],
-    visibility = ["//visibility:public"],
-    deps = [":java_benchmark_proto"],
-)
-
-java_proto_library(
-    name = "java_benchmark_proto",
-    deps = [":benchmark_proto"],
-    visibility = ["//visibility:public"],
-)
+load("@rules_proto_grpc//cpp:defs.bzl", "cpp_grpc_library")
+load("@rules_proto_grpc//java:defs.bzl", "java_grpc_library")
 
 proto_library(
     name = "benchmark_proto",
@@ -23,4 +10,16 @@ proto_library(
         "@com_google_protobuf//:duration_proto",
         "@com_google_protobuf//:timestamp_proto",
     ],
+)
+
+java_grpc_library(
+    name = "java_grpc",
+    protos = [":benchmark_proto"],
+    visibility = ["//visibility:public"],
+)
+
+cpp_grpc_library(
+    name = "cc_grpc",
+    protos = [":benchmark_proto"],
+    visibility = ["//visibility:public"],
 )

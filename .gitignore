@@ -5,3 +5,6 @@ node_modules
 *.lsif
 *.scip
 *.log
+external
+compile_commands.json
+.cache
