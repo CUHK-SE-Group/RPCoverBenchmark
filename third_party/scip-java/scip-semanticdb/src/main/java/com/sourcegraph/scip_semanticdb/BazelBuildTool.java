@@ -31,40 +31,38 @@ public class BazelBuildTool {
     }
 
     List<MavenPackage> mavenPackages = mavenPackages(options);
-    ScipSemanticdbReporter reporter =
-        new ScipSemanticdbReporter() {
-          private boolean hasErrors = false;
+    ScipSemanticdbReporter reporter = new ScipSemanticdbReporter() {
+      private boolean hasErrors = false;
 
-          @Override
-          public void error(Throwable e) {
-            e.printStackTrace(System.err);
-            hasErrors = true;
-          }
+      @Override
+      public void error(Throwable e) {
+        e.printStackTrace(System.err);
+        hasErrors = true;
+      }
 
-          @Override
-          public void error(String message) {
-            System.err.println("ERROR[scip-semanticdb]: " + message);
-            hasErrors = true;
-          }
+      @Override
+      public void error(String message) {
+        System.err.println("ERROR[scip-semanticdb]: " + message);
+        hasErrors = true;
+      }
 
-          @Override
-          public boolean hasErrors() {
-            return this.hasErrors;
-          }
-        };
-    ScipSemanticdbOptions scipOptions =
-        new ScipSemanticdbOptions(
-            options.targetroots,
-            options.output,
-            options.sourceroot,
-            reporter,
-            LsifToolInfo.newBuilder().setName("scip-java").setVersion("HEAD").build(),
-            "java",
-            ScipOutputFormat.TYPED_PROTOBUF,
-            options.parallel,
-            mavenPackages,
-            "",
-            true);
+      @Override
+      public boolean hasErrors() {
+        return this.hasErrors;
+      }
+    };
+    ScipSemanticdbOptions scipOptions = new ScipSemanticdbOptions(
+        options.targetroots,
+        options.output,
+        options.sourceroot,
+        reporter,
+        LsifToolInfo.newBuilder().setName("scip-java").setVersion("HEAD").build(),
+        "java",
+        ScipOutputFormat.TYPED_PROTOBUF,
+        options.parallel,
+        mavenPackages,
+        "",
+        true);
     ScipSemanticdb.run(scipOptions);
 
     if (!scipOptions.reporter.hasErrors()) {
@@ -83,8 +81,9 @@ public class BazelBuildTool {
       return result;
     }
     Bazelbuild.QueryResult jvmImports = runBazelQuery(options, "kind('.*_import', @maven//...)");
-    Path baseDirectory =
-        options.sourceroot.resolve("bazel-bin").resolve("external").resolve("maven");
+    Path baseDirectory = options.sourceroot.resolve("bazel-" + options.sourceroot.normalize().getFileName().toString())
+        .resolve("external")
+        .resolve("maven");
     PathMatcher jarPattern = FileSystems.getDefault().getPathMatcher("glob:**.jar");
     for (Bazelbuild.Target target : jvmImports.getTargetList()) {
       if (target.getType() != Bazelbuild.Target.Discriminator.RULE) {
