@@ -9,12 +9,17 @@ http_archive(
     ],
 )
 
-SCIP_JAVA_VERSION = "0.8.20"
+# SCIP_JAVA_VERSION = "0.8.20"
 
-http_archive(
+# http_archive(
+#     name = "scip_java",
+#     strip_prefix = "scip-java-{}".format(SCIP_JAVA_VERSION),
+#     url = "https://github.com/sourcegraph/scip-java/archive/refs/tags/v{}.zip".format(SCIP_JAVA_VERSION),
+# )
+
+local_repository(
     name = "scip_java",
-    strip_prefix = "scip-java-{}".format(SCIP_JAVA_VERSION),
-    url = "https://github.com/sourcegraph/scip-java/archive/refs/tags/v{}.zip".format(SCIP_JAVA_VERSION),
+    path = "third_party/scip-java",
 )
 
 http_archive(
