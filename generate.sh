@@ -4,11 +4,13 @@ PROTOC_GEN_GO=$(which protoc-gen-go)
 PROTOC_GEN_GO_GRPC=$(which protoc-gen-go-grpc)
 PROTOC_GEN_PY_GRPC=$(which grpc_python_plugin)
 PROTOC_GEN_CPP_GRPC=$(which grpc_cpp_plugin)
+PROTOC_GEN_JAVA_GRPC=$(which grpc_java_plugin)
 PROTO_DIR=protos
 GO_OUT_DIRS=(Go_A Go_B Go_C Cpp_A Cpp_B Cpp_C Java_A Java_B Java_C Ts_A Ts_B Ts_C Python_A Python_B Python_C message)
 TS_FOLDER=(Ts_A Ts_B Ts_C)
 GO_FOLDER=(Go_A Go_B Go_C)
 PYTHON_FOLDER=(Python_A Python_B Python_C)
+JAVA_FOLDER=(Java_A Java_B Java_C)
 
 # for dir in "${GO_OUT_DIRS[@]}"; do
 #   if [ ! -d "$dir" ]; then
@@ -54,5 +56,14 @@ for file in "${TS_FOLDER[@]}"; do
       --ts_proto_opt=outputServices=grpc-js \
       --ts_proto_opt=esModuleInterop=true \
       -I=./ protos/"$dir".proto
+  done
+done
+
+for file in "${JAVA_FOLDER[@]}"; do
+  for dir in "${GO_OUT_DIRS[@]}"; do
+    if [ ! -d "$dir" ]; then
+      mkdir "$dir"
+    fi
+    protoc --java_out=$file --java-grpc_out=$file --plugin=protoc-gen-java-grpc=$PROTOC_GEN_JAVA_GRPC $PROTO_DIR/"$dir".proto
   done
 done
