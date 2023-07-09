@@ -119,7 +119,7 @@ compat_repositories()
 
 local_repository(
     name = "hedron_compile_commands",
-    path = "third_party/bazel-compile-commands-extractor",
+    path = "third_party/compile-commands-extractor",
 )
 
 load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
