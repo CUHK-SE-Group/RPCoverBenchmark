@@ -4,4 +4,4 @@ server:
 	bazel build //Cpp_B:server
 
 cc.json:
-	bazel run //Cpp_B:compile_commands
+	./generate_index.sh

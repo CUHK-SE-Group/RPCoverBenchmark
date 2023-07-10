@@ -11,6 +11,7 @@ TS_FOLDER=(Ts_A Ts_B Ts_C)
 GO_FOLDER=(Go_A Go_B Go_C)
 PYTHON_FOLDER=(Python_A Python_B Python_C)
 JAVA_FOLDER=(Java_A Java_B Java_C)
+CPP_FOLDER=(Cpp_A Cpp_B Cpp_C)
 
 # for dir in "${GO_OUT_DIRS[@]}"; do
 #   if [ ! -d "$dir" ]; then
@@ -65,5 +66,14 @@ for file in "${JAVA_FOLDER[@]}"; do
       mkdir "$dir"
     fi
     protoc --java_out=$file --java-grpc_out=$file --plugin=protoc-gen-java-grpc=$PROTOC_GEN_JAVA_GRPC $PROTO_DIR/"$dir".proto
+  done
+done
+
+for file in "${CPP_FOLDER[@]}"; do
+  for dir in "${GO_OUT_DIRS[@]}"; do
+    if [ ! -d "$dir" ]; then
+      mkdir "$dir"
+    fi
+    protoc --cpp_out=$file --cpp-grpc_out=$file --plugin=protoc-gen-cpp-grpc=$PROTOC_GEN_CPP_GRPC $PROTO_DIR/"$dir".proto
   done
 done
