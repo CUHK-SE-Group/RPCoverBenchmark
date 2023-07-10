@@ -1,0 +1,24 @@
+$schema: "http://json.schemastore.org/buildkite"
+steps:
+  - label: ":bazel: Build and Test"
+    agents:
+      queue: bazel
+    key: build
+    command: |
+      ./tools/reformat.sh
+      if ! git diff --quiet; then
+        git diff
+        echo ""
+        echo "-----------------------------------"
+        echo "Re-run ./tools/reformat.sh and push"
+        echo "-----------------------------------"
+        exit 1
+      fi
+
+      ./tools/lint.sh
+
+      # DO NOT remove --config=ci as that turns on sanitizers.
+      bazel --bazelrc=.bazelrc --bazelrc=.aspect/bazelrc/ci.bazelrc build //... --config=ci
+
+      # Don't use //... as that will also try to update snapshots
+      bazel --bazelrc=.bazelrc --bazelrc=.aspect/bazelrc/ci.bazelrc test //test --config=ci
