@@ -4,4 +4,6 @@ protos:
 	protoc --go_out=Go_C  --grpc_out=Go_C --plugin=protoc-gen-grpc=/Users/lincyaw/go/bin/protoc-gen-go-grpc protos/Go_C.proto
 
 clean:
-	bazel clean
+	# bazel clean
+	rm *.scip
+	rm *.log
