@@ -58,15 +58,15 @@ def gen_java_scip(project_root):
 
 
 def gen_ts():
-    monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.01)
-    monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.01)
-    monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.01)
+    monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.0001)
 
 
 def gen_py():
-    monitor(gen_py_scip("Python_A", "pya.scip"), "/tmp/11111.log", 0.01)
-    monitor(gen_py_scip("Python_B", "pyb.scip"), "/tmp/11111.log", 0.01)
-    monitor(gen_py_scip("Python_C", "pyc.scip"), "/tmp/11111.log", 0.01)
+    monitor(gen_py_scip("Python_A", "pya.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_py_scip("Python_B", "pyb.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_py_scip("Python_C", "pyc.scip"), "/tmp/11111.log", 0.0001)
     os.chdir(base_path)
     subprocess.run(['mv', 'Python_A/pya.scip', "."])
     subprocess.run(['mv', 'Python_B/pyb.scip', "."])
@@ -74,20 +74,20 @@ def gen_py():
 
 
 def gen_go():
-    monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.01)
-    monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.01)
-    monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.01)
+    monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.0001)
+    monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.0001)
+    monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.0001)
 
 
 def gen_java():
-    monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.01)
-    monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.01)
-    monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.01)
+    monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.0001)
+    monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.0001)
+    monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001)
     os.chdir(base_path)
 
 
 def total():
-    # The command you want to execute
+    os.chdir(base_path)
     proto_files = glob.glob('protos/*.proto')
     command = [
         "protoc",
@@ -97,7 +97,7 @@ def total():
         "-I",
         ".",
     ] + proto_files
-    return monitor(command, "/tmp/111111.log", 0.01)
+    return monitor(command, "/tmp/111111.log", 0.000001)
 
 
 def tidy():
@@ -150,7 +150,7 @@ def clean():
 @cli.command()
 def convert():
     monitor([convert_path, "convert", "--from",
-            "total.scip"], "/tmp/11111.log", 0.01)
+            "total.scip"], "/tmp/11111.log", 0.0001)
 
 
 @cli.command()
@@ -162,7 +162,7 @@ def performance_merge_every():
     tidy()
     for _ in range(num):
         perf['Ts_A'].append(
-            monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.0001))
         perf['Ts_A_m'].append(total())
 
     perf['Ts_B'] = []
@@ -170,7 +170,7 @@ def performance_merge_every():
     tidy()
     for _ in range(num):
         perf['Ts_B'].append(
-            monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.0001))
         perf['Ts_B_m'].append(total())
 
     perf['Ts_C'] = []
@@ -178,74 +178,87 @@ def performance_merge_every():
     tidy()
     for _ in range(num):
         perf['Ts_C'].append(
-            monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.0001))
         perf['Ts_C_m'].append(total())
 
+    os.chdir(base_path)
     perf['Python_A'] = []
     perf['Python_A_m'] = []
     tidy()
     for _ in range(num):
         perf['Python_A'].append(
-            monitor(gen_py_scip("Python_A", "pya.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_py_scip("Python_A", "pya.scip"), "/tmp/11111.log", 0.0001))
+        os.chdir(base_path)
+        subprocess.run(['mv', 'Python_A/pya.scip', "."])
         perf['Python_A_m'].append(total())
+
     perf['Python_B'] = []
     perf['Python_B_m'] = []
     tidy()
     for _ in range(num):
         perf['Python_B'].append(
-            monitor(gen_py_scip("Python_B", "pyb.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_py_scip("Python_B", "pyb.scip"), "/tmp/11111.log", 0.0001))
+        os.chdir(base_path)
+        subprocess.run(['mv', 'Python_B/pyb.scip', "."])
         perf['Python_B_m'].append(total())
     perf['Python_C'] = []
     perf['Python_C_m'] = []
     tidy()
     for _ in range(num):
         perf['Python_C'].append(
-            monitor(gen_py_scip("Python_C", "pyc.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_py_scip("Python_C", "pyc.scip"), "/tmp/11111.log", 0.0001))
+        os.chdir(base_path)
+        subprocess.run(['mv', 'Python_C/pyc.scip', "."])
         perf['Python_C_m'].append(total())
-    os.chdir(base_path)
-    subprocess.run(['mv', 'Python_A/pya.scip', "."])
-    subprocess.run(['mv', 'Python_B/pyb.scip', "."])
-    subprocess.run(['mv', 'Python_C/pyc.scip', "."])
 
     perf['Go_A'] = []
     perf['Go_A_m'] = []
     tidy()
     for _ in range(num):
         perf['Go_A'].append(
-            monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.01))
+            monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.0001))
         perf['Go_A_m'].append(total())
     perf['Go_B'] = []
     perf['Go_B_m'] = []
     tidy()
     for _ in range(num):
         perf['Go_B'].append(
-            monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.01))
+            monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.0001))
         perf['Go_B_m'].append(total())
+    perf['Go_C'] = []
     perf['Go_C_m'] = []
     tidy()
     for _ in range(num):
         perf['Go_C'].append(
-            monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.01))
+            monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.0001))
         perf['Go_C_m'].append(total())
     os.chdir(base_path)
+    perf['Java_A'] = []
     perf['Java_A_m'] = []
     tidy()
     for _ in range(num):
         perf['Java_A'].append(
-            monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.01))
+            monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.0001))
+        os.chdir(base_path)
         perf['Java_A_m'].append(total())
+
+    perf['Java_B'] = []
     perf['Java_B_m'] = []
     tidy()
     for _ in range(num):
         perf['Java_B'].append(
-            monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.01))
+            monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.0001))
+        os.chdir(base_path)
         perf['Java_B_m'].append(total())
+    perf['Java_C'] = []
     perf['Java_C_m'] = []
     tidy()
     for _ in range(num):
         perf['Java_C'].append(
-            monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.01))
+            monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001))
+        os.chdir(base_path)
         perf['Java_C_m'].append(total())
+    os.chdir(base_path)
     with open('output.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for i, value in perf.items():
@@ -262,27 +275,27 @@ def performance_merge_once():
     perf['Ts_A'] = []
     for _ in range(num):
         perf['Ts_A'].append(
-            monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.0001))
     perf['Ts_B'] = []
     for _ in range(num):
         perf['Ts_B'].append(
-            monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.0001))
     perf['Ts_C'] = []
     for _ in range(num):
         perf['Ts_C'].append(
-            monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.0001))
     perf['Python_A'] = []
     for _ in range(num):
         perf['Python_A'].append(
-            monitor(gen_py_scip("Python_A", "pya.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_py_scip("Python_A", "pya.scip"), "/tmp/11111.log", 0.0001))
     perf['Python_B'] = []
     for _ in range(num):
         perf['Python_B'].append(
-            monitor(gen_py_scip("Python_B", "pyb.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_py_scip("Python_B", "pyb.scip"), "/tmp/11111.log", 0.0001))
     perf['Python_C'] = []
     for _ in range(num):
         perf['Python_C'].append(
-            monitor(gen_py_scip("Python_C", "pyc.scip"), "/tmp/11111.log", 0.01))
+            monitor(gen_py_scip("Python_C", "pyc.scip"), "/tmp/11111.log", 0.0001))
     os.chdir(base_path)
     subprocess.run(['mv', 'Python_A/pya.scip', "."])
     subprocess.run(['mv', 'Python_B/pyb.scip', "."])
@@ -291,29 +304,34 @@ def performance_merge_once():
     perf['Go_A'] = []
     for _ in range(num):
         perf['Go_A'].append(
-            monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.01))
+            monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.0001))
     perf['Go_B'] = []
     for _ in range(num):
         perf['Go_B'].append(
-            monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.01))
+            monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.0001))
     perf['Go_C'] = []
     for _ in range(num):
         perf['Go_C'].append(
-            monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.01))
+            monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.0001))
     os.chdir(base_path)
     perf['Java_A'] = []
     for _ in range(num):
         perf['Java_A'].append(
-            monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.01))
+            monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.0001))
     perf['Java_B'] = []
     for _ in range(num):
         perf['Java_B'].append(
-            monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.01))
+            monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.0001))
     perf['Java_C'] = []
     for _ in range(num):
         perf['Java_C'].append(
-            monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.01))
-    perf['total'] = [total()]
+            monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001))
+    os.chdir(base_path)
+    perf['total'] = []
+    for _ in range(num):
+        os.remove("total.scip")
+        perf['total'].append(total())
+
     with open('output.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for i, value in perf.items():
