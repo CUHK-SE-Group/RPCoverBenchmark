@@ -7,3 +7,12 @@ clean:
 	# bazel clean
 	rm *.scip
 	rm *.log
+
+all:
+	make -C Cpp_A
+	make -C Cpp_B
+	make -C Cpp_C
+
+	make -C Java_A
+	make -C Java_B
+	make -C Java_C

@@ -56,6 +56,10 @@ def gen_java_scip(project_root):
     os.chdir(base_path+"/"+project_root)
     return ["make"]
 
+def gen_cpp_scip(project_root, output_file):
+    os.chdir(base_path+"/"+project_root)
+    return ["scip-clang", "--compdb-path="+"build/compile_commands.json", "--index-output-path="+"../"+output_file]
+
 
 def gen_ts():
     monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.0001)
@@ -85,6 +89,11 @@ def gen_java():
     monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001)
     os.chdir(base_path)
 
+
+def gen_cpp():
+    monitor(gen_cpp_scip("Cpp_A", "cppa.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_cpp_scip("Cpp_B", "cppb.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_cpp_scip("Cpp_C", "cppc.scip"), "/tmp/11111.log", 0.0001)
 
 def total():
     os.chdir(base_path)
@@ -117,7 +126,6 @@ def tidy():
 def cli():
     pass
 
-
 @cli.command()
 def gen_simple_scip():
     """This command generate the base scip index file of Python, Java, Go, C++, Typescipt projects."""
@@ -130,6 +138,8 @@ def gen_simple_scip():
     gen_go()
     click.echo('Generating Python SCIP index...')
     gen_py()
+    click.echo('Generating Cpp SCIP index...')
+    gen_cpp()
     click.echo('Done!')
 
 
@@ -259,6 +269,37 @@ def performance_merge_every():
         os.chdir(base_path)
         perf['Java_C_m'].append(total())
     os.chdir(base_path)
+
+    perf['Cpp_A'] = []
+    perf['Cpp_A_m'] = []
+    tidy()
+    for _ in range(num):
+        perf['Cpp_A'].append(
+            monitor(gen_cpp_scip("Cpp_A", "cppa.scip"), "/tmp/11111.log", 0.0001))
+        perf['Cpp_A_m'].append(total())
+
+    os.chdir(base_path)
+
+    perf['Cpp_B'] = []
+    perf['Cpp_B_m'] = []
+    tidy()
+    for _ in range(num):
+        perf['Cpp_B'].append(
+            monitor(gen_cpp_scip("Cpp_B", "cppa.scip"), "/tmp/11111.log", 0.0001))
+        perf['Cpp_B_m'].append(total())
+
+    os.chdir(base_path)
+
+    perf['Cpp_C'] = []
+    perf['Cpp_C_m'] = []
+    tidy()
+    for _ in range(num):
+        perf['Cpp_C'].append(
+            monitor(gen_cpp_scip("Cpp_C", "cppa.scip"), "/tmp/11111.log", 0.0001))
+        perf['Cpp_C_m'].append(total())
+
+    os.chdir(base_path)
+
     with open('output.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for i, value in perf.items():
@@ -326,6 +367,19 @@ def performance_merge_once():
     for _ in range(num):
         perf['Java_C'].append(
             monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001))
+    os.chdir(base_path)
+    perf['Cpp_A'] = []
+    for _ in range(num):
+        perf['Cpp_A'].append(
+            monitor(gen_cpp_scip("Cpp_A", "cppa.index"), "/tmp/11111.log", 0.0001))
+    perf['Cpp_B'] = []
+    for _ in range(num):
+        perf['Cpp_B'].append(
+            monitor(gen_cpp_scip("Cpp_B", "cppa.index"), "/tmp/11111.log", 0.0001))
+    perf['Cpp_C'] = []
+    for _ in range(num):
+        perf['Cpp_C'].append(
+            monitor(gen_cpp_scip("Cpp_C", "cppa.index"), "/tmp/11111.log", 0.0001))
     os.chdir(base_path)
     perf['total'] = []
     for _ in range(num):
