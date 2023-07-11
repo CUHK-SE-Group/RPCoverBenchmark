@@ -1,11 +1,10 @@
-load("@rules_java//java:defs.bzl", "java_binary")
+load("@scip_java//semanticdb-javac:defs.bzl", "java_binary")
 
 java_binary(
     name = "server",
     srcs = glob(["src/main/benchmark/*.java"]),
     main_class = "Server",
     deps = [
-        # "//protos:java_grpc",
         "@io_grpc_grpc_java//api",
         "@io_grpc_grpc_java//protobuf",
         "@io_grpc_grpc_java//stub",

@@ -5,7 +5,6 @@ java_binary(
     srcs = glob(["src/main/benchmark/*.java"]),
     main_class = "Server",
     deps = [
-        # "//protos:java_grpc",
         "@io_grpc_grpc_java//api",
         "@io_grpc_grpc_java//protobuf",
         "@io_grpc_grpc_java//stub",

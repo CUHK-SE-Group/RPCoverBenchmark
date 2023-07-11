@@ -1,0 +1,3 @@
+build --repo_env=CC=clang --repo_env=CXX=clang++
+
+build --cxxopt=-std=c++14 --host_cxxopt=-std=c++14
