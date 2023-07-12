@@ -2,9 +2,11 @@
 
 ## Call Dependencies
 
-A function is named as [Language]-[Svc Name]-[Function#]. Take the first function as an example, it is named as `python-A-1`.
+The following table shows the service/function level dependencies(calls).
 
-If a function calls another function, whether it is a direct function call or a remote procedure call, it will be considered as a dependent service. Taking the first line in the table as an example, it indicates that `python-A-1` will call `python-A-2`, `python-B-1`, and `python-C-1`.
+A function is named [Language]-[Svc Name]-[Function#]. 
+
+Take the first function as an example, it is named as `python-A-1`. If a function calls another function, whether it is a direct function call or a remote procedure call, it will be considered as a dependent service. Taking the first line in the table as an example, it indicates that `python-A-1` will call `python-A-2`, `python-B-1`, and `python-C-1`.
 
 | Language     | Svc Name | Function# | Dependent Services Function ID                            |
 |--------------|----------|-----------|-----------------------------------------------------------|
