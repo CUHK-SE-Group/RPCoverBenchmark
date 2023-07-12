@@ -1,7 +1,7 @@
-all: server cc.json
+all: server index
 
 server:
 	bazel build //Cpp_A:server
 
-cc.json:
-	./generate_index.sh
+index:
+	./generate_index.sh ./

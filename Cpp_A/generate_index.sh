@@ -8,6 +8,8 @@ SCIP_CLANG_BIN=$SCIP_CLANG_DIR/bazel-bin/indexer/scip-clang
 
 CC_PATH=$CASE_DIR/build/compile_commands.json
 
+OUTPUT_DIR=$1
+
 cd $CASE_DIR
 
 if [ -d "build" ]; then
@@ -21,6 +23,6 @@ cd $SCIP_CLANG_DIR
 bazel build //indexer:scip-clang --config=release
 
 cd $ROOT_DIR
-$SCIP_CLANG_BIN --compdb-path=$CC_PATH --index-output-path=$CASE_DIR/index.scip
+$SCIP_CLANG_BIN --compdb-path=$CC_PATH --index-output-path=$OUTPUT_DIR/index.scip
 
 cd $PREV_DIR
