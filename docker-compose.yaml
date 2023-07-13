@@ -1,32 +1,17 @@
 version: "3"
 services:
-  go_a:
-    build: ./Go_A
+  bench:
+    build: .
     networks:
       - rpcover
-    entrypoint: [ "./server" ]
-  go_b:
-    build: ./Go_B
+  memgraph:
+    image: memgraph/memgraph-platform:latest
     networks:
       - rpcover
-    entrypoint: [ "./server" ]
-  go_c:
-    build: ./Go_C
-    networks:
-      - rpcover
-    entrypoint: [ "./server" ]
+    tty: true
+    ports:
+      - 3333:3000
+      - 3334:7687
 
-  python_a:
-    build: ./Python_A
-    networks:
-      - rpcover
-  python_b:
-    build: ./Python_B
-    networks:
-      - rpcover
-  python_c:
-    build: ./Python_A
-    networks:
-      - rpcover
 networks:
   rpcover:
