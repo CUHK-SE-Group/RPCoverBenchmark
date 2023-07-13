@@ -13,19 +13,6 @@ PYTHON_FOLDER=(Python_A Python_B Python_C)
 JAVA_FOLDER=(Java_A Java_B Java_C)
 CPP_FOLDER=(Cpp_A Cpp_B Cpp_C)
 
-# for dir in "${GO_OUT_DIRS[@]}"; do
-#   if [ ! -d "$dir" ]; then
-#     mkdir "$dir"
-#   fi
-#   protoc --go_out=Go_A --go-grpc_out=Go_A --plugin=protoc-gen-go=$PROTOC_GEN_GO --plugin=protoc-gen-go-grpc=$PROTOC_GEN_GO_GRPC $PROTO_DIR/*.proto
-#   protoc --go_out=Go_B --go-grpc_out=Go_B --plugin=protoc-gen-go=$PROTOC_GEN_GO --plugin=protoc-gen-go-grpc=$PROTOC_GEN_GO_GRPC $PROTO_DIR/*.proto
-#   protoc --go_out=Go_C --go-grpc_out=Go_C --plugin=protoc-gen-go=$PROTOC_GEN_GO --plugin=protoc-gen-go-grpc=$PROTOC_GEN_GO_GRPC $PROTO_DIR/*.proto
-#   protoc --python_out=Python_A --python-grpc_out=Python_A --pyi_out=Python_A --plugin=protoc-gen-python-grpc=$PROTOC_GEN_PY_GRPC $PROTO_DIR/*.proto
-#   protoc --python_out=Python_B --python-grpc_out=Python_B --pyi_out=Python_B --plugin=protoc-gen-python-grpc=$PROTOC_GEN_PY_GRPC $PROTO_DIR/*.proto
-#   protoc --python_out=Python_C --python-grpc_out=Python_C --pyi_out=Python_C --plugin=protoc-gen-python-grpc=$PROTOC_GEN_PY_GRPC $PROTO_DIR/*.proto
-#   protoc --cpp_out=Cpp_A --grpc_out=Cpp_A --plugin=protoc-gen-grpc=$PROTOC_GEN_CPP_GRPC $PROTO_DIR/*.proto
-#   protoc --cpp_out=Cpp_B --grpc_out=Cpp_B --plugin=protoc-gen-grpc=$PROTOC_GEN_CPP_GRPC $PROTO_DIR/*.proto
-#   protoc --cpp_out=Cpp_C --grpc_out=Cpp_C --plugin=protoc-gen-grpc=$PROTOC_GEN_CPP_GRPC $PROTO_DIR/*.proto
 for file in "${GO_FOLDER[@]}"; do
   for dir in "${GO_OUT_DIRS[@]}"; do
     if [ ! -d "$dir" ]; then

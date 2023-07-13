@@ -5,10 +5,10 @@ import click
 import csv
 
 
-plugin_path = "/opt/RPCoverBenchmark/third_party/binaries/protoc-gen-scip"
-convert_path = "/opt/RPCoverBenchmark/third_party/binaries/convert"
-scip_go_path = "/opt/RPCoverBenchmark/third_party/binaries/scip-go"
-scip_clang_path = "/opt/RPCoverBenchmark/third_party/binaries/scip-clang"
+plugin_path = "/opt/third_party/binaries/protoc-gen-scip"
+convert_path = "/opt/third_party/binaries/convert"
+scip_go_path = "/opt/third_party/binaries/scip-go"
+scip_clang_path = "/opt/third_party/binaries/scip-clang"
 base_path = os.getcwd()
 
 
@@ -58,6 +58,7 @@ def gen_java_scip(project_root):
     os.chdir(base_path+"/"+project_root)
     return ["make"]
 
+
 def gen_cpp_scip(project_root, output_file):
     os.chdir(base_path+"/"+project_root)
     return [scip_clang_path, "--compdb-path="+"build/compile_commands.json", "--index-output-path="+"../"+output_file]
@@ -97,6 +98,7 @@ def gen_cpp():
     monitor(gen_cpp_scip("Cpp_B", "cppb.scip"), "/tmp/11111.log", 0.0001)
     monitor(gen_cpp_scip("Cpp_C", "cppc.scip"), "/tmp/11111.log", 0.0001)
 
+
 def total():
     os.chdir(base_path)
     proto_files = glob.glob('protos/*.proto')
@@ -127,6 +129,7 @@ def tidy():
 @click.group()
 def cli():
     pass
+
 
 @cli.command()
 def gen_simple_scip():
@@ -161,14 +164,18 @@ def clean():
 
 @cli.command()
 def convert():
+    """This command will convert the total.scip file into dump.lsif"""
     monitor([convert_path, "convert", "--from",
             "total.scip"], "/tmp/11111.log", 0.0001)
 
 
 @cli.command()
 def performance_merge_every():
+    """This command will run every scip index, and merge it into the total.scip index. 
+    The result is the output.csv.
+    This process will be processed 20 times."""
     perf = {}
-    num = 1
+    num = 20
     perf['Ts_A'] = []
     perf['Ts_A_m'] = []
     tidy()
@@ -312,9 +319,9 @@ def performance_merge_every():
 
 @cli.command()
 def performance_merge_once():
-    """This command will run the all process 20 times and output the report as perf.report"""
+    """This command will run the all process 20 times and output the report as output.csv"""
     perf = {}
-    num = 1
+    num = 20
     perf['Ts_A'] = []
     for _ in range(num):
         perf['Ts_A'].append(
@@ -394,6 +401,28 @@ def performance_merge_once():
             cpu = sum([j[0] for j in value])/len(value)
             mem = sum([j[1] for j in value])/len(value)
             writer.writerow([i, cpu, mem])
+
+
+@cli.command()
+@click.argument('arguments')
+def time(arguments: str):
+    """This command is a general wrapper of executing command with measuring the time and peak memory.
+    There may be some cost bewteen switching processes.
+
+    Example: \n
+    $ python bench.py time "sleep 10" \n
+    Attaching to process 1965781 \n
+    Process finished (9.97 seconds)\n
+    Time: 9.969s, Memory: 0.992MB\n
+    """
+    cmd = arguments.split(' ')
+    pid = subprocess.Popen(cmd).pid
+    psrecord_cmd = ["psrecord", str(pid), "--log", "/tmp/111.log",
+                    "--interval", str(0.0001)]
+    subprocess.run(psrecord_cmd)
+    cpu, mem = parse_psrecord_log("/tmp/111.log")
+    print(f"Time: {cpu}s, Memory: {mem}MB")
+    return cpu, mem
 
 
 if __name__ == "__main__":

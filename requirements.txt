@@ -1,0 +1,5 @@
+click==8.1.4
+psrecord==1.2
+grpcio==1.56.0
+grpcio-tools==1.56.0
+protobuf==4.23.3
