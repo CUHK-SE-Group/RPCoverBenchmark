@@ -1,7 +1,4 @@
-all: server index
-
-server:
-	bazel build //Cpp_B:server
+all: index
 
 index:
 	./generate_index.sh ./
