@@ -5,8 +5,10 @@ import click
 import csv
 
 
-plugin_path = "/home/nn/protoc-gen-scip/protoc-gen-scip"
-convert_path = "/home/nn/protoc-gen-scip/convert/convert"
+plugin_path = "/opt/RPCoverBenchmark/third_party/binaries/protoc-gen-scip"
+convert_path = "/opt/RPCoverBenchmark/third_party/binaries/convert"
+scip_go_path = "/opt/RPCoverBenchmark/third_party/binaries/scip-go"
+scip_clang_path = "/opt/RPCoverBenchmark/third_party/binaries/scip-clang"
 base_path = os.getcwd()
 
 
@@ -40,7 +42,7 @@ def parse_psrecord_log(log_file):
 
 
 def gen_go_scip(module_root: str, project_root: str, output_file: str):
-    return ["scip-go", f"--module-root={module_root}", f"--project-root={project_root}", f"--output={output_file}"]
+    return [scip_go_path, f"--module-root={module_root}", f"--project-root={project_root}", f"--output={output_file}"]
 
 
 def gen_ts_scip(project_root, output_file):
@@ -58,7 +60,7 @@ def gen_java_scip(project_root):
 
 def gen_cpp_scip(project_root, output_file):
     os.chdir(base_path+"/"+project_root)
-    return ["scip-clang", "--compdb-path="+"build/compile_commands.json", "--index-output-path="+"../"+output_file]
+    return [scip_clang_path, "--compdb-path="+"build/compile_commands.json", "--index-output-path="+"../"+output_file]
 
 
 def gen_ts():
