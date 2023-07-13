@@ -3,6 +3,7 @@ import os
 import glob
 import click
 import csv
+import json
 
 
 plugin_path = "/opt/third_party/binaries/protoc-gen-scip"
@@ -163,10 +164,11 @@ def clean():
 
 
 @cli.command()
-def convert():
+@click.argument('arg')
+def convert(arg):
     """This command will convert the total.scip file into dump.lsif"""
     monitor([convert_path, "convert", "--from",
-            "total.scip"], "/tmp/11111.log", 0.0001)
+            arg], "/tmp/11111.log", 0.0001)
 
 
 @cli.command()
@@ -423,6 +425,85 @@ def time(arguments: str):
     cpu, mem = parse_psrecord_log("/tmp/111.log")
     print(f"Time: {cpu}s, Memory: {mem}MB")
     return cpu, mem
+
+
+def vertex_stmt(label, properties: dict):
+    prop = []
+    for i, v in properties.items():
+        if isinstance(v, dict):
+            for key, value in v.items():
+                prop.append(f'{str(i)}_{key}' + ":" + '"' + str(value) + '"')
+        else:
+            prop.append(str(i) + ":" + '"' + str(v) + '"')
+    stmt = "CREATE (n0 {} {})".format(":" + label, "{" + ",".join(prop) + "}")
+    return stmt
+
+
+def edge_stmt(label, properties: dict):
+    if "inV" in properties:
+        conInV = '{{id: "{}"}}'.format(properties['inV'])
+        conOutV = '{{id: "{}"}}'.format(properties['outV'])
+        edge_label = label.split("/")[-1]
+        edge_prop = []
+        for i, v in properties.items():
+            if isinstance(v, dict):
+                for key, value in v.items():
+                    edge_prop.append(f'{str(i)}_{key}' +
+                                     ":" + '"' + str(value) + '"')
+            else:
+                edge_prop.append(str(i) + ":" + '"' + str(v) + '"')
+        stmt = "MATCH (inV {}), (outV {}) CREATE (outV)-[:{} {}]->(inV)".format(
+            conInV, conOutV, edge_label, "{" + ",".join(edge_prop) + "}")
+        return [stmt]
+    else:
+        stmts = []
+        for inV in properties['inVs']:
+            conInV = '{{id: "{}"}}'.format(inV)
+            conOutV = '{{id: "{}"}}'.format(properties['outV'])
+            edge_label = label.split("/")[-1]
+            edge_prop = []
+            for i, v in properties.items():
+                if isinstance(v, dict):
+                    continue
+                elif isinstance(v, list):
+                    continue
+                edge_prop.append(str(i) + ":" + '"' + str(v) + '"')
+            stmt = "MATCH (inV {}), (outV {}) CREATE (outV)-[:{} {}]->(inV)".format(
+                conInV, conOutV, edge_label, "{" + ",".join(edge_prop) + "}")
+            stmts.append(stmt)
+        return stmts
+
+
+def l2c(lsif_stmt):
+    vertex = []
+    edge = []
+    for d in lsif_stmt:
+        if d['type'] == "vertex" and d['label'] != "hoverResult":
+            vertex.append(vertex_stmt(d['label'], d))
+        elif d['type'] == "edge":
+            edge.extend(edge_stmt(d['label'], d))
+    return vertex, edge
+
+
+@cli.command()
+@click.option('--input', default='dump.lsif', prompt='input file')
+@click.option('--output', default='total.cypherl', prompt='output file')
+def lsif2cypher(input, output):
+    with open(input, "r") as f:
+        data = [json.loads(line) for line in f]
+        data = [d for d in data]
+        vertex, edge = l2c(data)
+    with open(output, 'w') as fi:
+        for i in vertex:
+            fi.write(i + "\n")
+        fi.write("CREATE INDEX ON :definitionResult(id)\n")
+        fi.write("CREATE INDEX ON :document(id)\n")
+        fi.write("CREATE INDEX ON :implementationReuslt(id)\n")
+        fi.write("CREATE INDEX ON :range(id)\n")
+        fi.write("CREATE INDEX ON :referenceResult(id)\n")
+        fi.write("CREATE INDEX ON :resultSet(id)\n")
+        for i in edge:
+            fi.write(i + "\n")
 
 
 if __name__ == "__main__":
