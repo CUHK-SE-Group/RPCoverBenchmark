@@ -14,12 +14,13 @@ base_path = os.getcwd()
 
 subprocess.run(["make", "all"])
 
+
 def monitor(cmd: list, log_file: str, interval: float):
     psrecord_cmd = ["psrecord", str(subprocess.Popen(
         cmd).pid), "--log", log_file, "--interval", str(interval)]
     subprocess.run(psrecord_cmd)
     cpu, mem = parse_psrecord_log(log_file)
-    print(f"Time: {cpu}s, Memory: {mem}MB")
+    print(f"Time: {str(cpu)}s, Memory: {str(mem)}MB")
     return cpu, mem
 
 

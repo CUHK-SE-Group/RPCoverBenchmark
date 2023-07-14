@@ -8,3 +8,4 @@ COPY . /opt/RPCoverBenchmark
 WORKDIR /opt/RPCoverBenchmark
 
 RUN bash -c "./install.sh"
+CMD [ "source", "venv/bin/activate" ]
