@@ -151,3 +151,8 @@ Process finished (1.36 seconds)
 Time: 1.358s, Memory: 251.984MB
 ```
 
+### merge all the scip files and the proto files into one scip index
+
+```bash
+protoc --scip_out=./ --plugin=/opt/RPCoverBenchmark/third_party/binaries/protoc-gen-scip --scip_opt=scip_dir=./,sourceroot=$(pwd),out_file=total.scip -I . $(find . -name "*.proto")
+```
