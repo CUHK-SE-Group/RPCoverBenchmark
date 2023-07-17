@@ -12,7 +12,7 @@ scip_go_path = "/opt/third_party/binaries/scip-go"
 scip_clang_path = "/opt/third_party/binaries/scip-clang"
 base_path = os.getcwd()
 
-subprocess.run(["make", "all"])
+# subprocess.run(["make", "all"])
 
 
 def monitor(cmd: list, log_file: str, interval: float):
