@@ -68,8 +68,7 @@ def gen_py_scip(project_root, output_file):
 
 
 def gen_java_scip(project_root, output_file):
-    os.chdir(base_path+"/"+project_root)
-    return ["./generate_index.sh", output_file]
+    return [project_root +"/generate_index.sh", output_file]
 
 
 def gen_cpp_scip(project_root, output_file):
