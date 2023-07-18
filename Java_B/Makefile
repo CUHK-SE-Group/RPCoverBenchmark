@@ -4,4 +4,4 @@ build:
 	mvn clean package
 
 scip: build
-	./generate_index.sh ./
+	./generate_index.sh ./index.scip
