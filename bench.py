@@ -28,7 +28,7 @@ def monitor(cmd: list, log_file: str, interval: float):
     user_time = float(user_time_match.group(1)) if user_time_match else None
     max_resident_set_size = int(max_resident_set_size_match.group(
         1)) if max_resident_set_size_match else None
-
+    print(message)
     print(
         f"Time: {str(user_time)}s, Memory: {str(max_resident_set_size//1000)}MB")
     return user_time, max_resident_set_size//1000
@@ -326,16 +326,25 @@ def performance_merge_every():
     with open('output.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for i, value in perf.items():
+            cnt = 0
+        prev = None
+        for i, value in perf.items():
             cpu = sum([j[0] for j in value])/len(value)
             mem = sum([j[1] for j in value])/len(value)
-            writer.writerow([i, cpu, mem])
+            if cnt % 2 == 0:
+                prev = (cpu, mem)
+                writer.writerow([i, cpu, mem])
+            else:
+                writer.writerow(
+                    [i, cpu, mem, cpu/prev[0]*100, mem/prev[1]*100])
+            cnt += 1
 
 
 @cli.command()
 def performance_merge_once():
     """This command will run the all process 20 times and output the report as output.csv"""
     perf = {}
-    num = 20
+    num = 1
     perf['Ts_A'] = []
     for _ in range(num):
         perf['Ts_A'].append(
@@ -412,9 +421,18 @@ def performance_merge_once():
     with open('output.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for i, value in perf.items():
+            cnt = 0
+        prev = None
+        for i, value in perf.items():
             cpu = sum([j[0] for j in value])/len(value)
             mem = sum([j[1] for j in value])/len(value)
-            writer.writerow([i, cpu, mem])
+            if cnt % 2 == 0:
+                prev = (cpu, mem)
+                writer.writerow([i, cpu, mem])
+            else:
+                writer.writerow(
+                    [i, cpu, mem, cpu/prev[0]*100, mem/prev[1]*100])
+            cnt += 1
 
 
 def vertex_stmt(label, properties: dict):
