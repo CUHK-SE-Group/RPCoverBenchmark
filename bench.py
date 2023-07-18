@@ -113,9 +113,9 @@ def gen_cpp():
 
 def total():
     os.chdir(base_path)
-    if os.path.exists("scip"):
+    if os.path.exists("total.scip"):
     # 如果存在，删除文件
-        os.remove("scip")
+        os.remove("total.scip")
     proto_files = glob.glob('protos/*.proto')
     command = [
         "protoc",

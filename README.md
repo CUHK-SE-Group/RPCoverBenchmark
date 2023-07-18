@@ -210,6 +210,11 @@ In this benchmark, the generated file size is around 2.9MB
 -rw-r--r-- 1 root root 2.9M Jul 17 08:02 total.scip
 ```
 
+Or in anther way, you can maually input this command in the repository root path to get the corresponding merge file.
+
+```bash
+/usr/bin/time -v protoc --scip_out=./ --plugin=/opt/third_party/binaries/protoc-gen-scip --scip_opt=scip_dir=./,sourceroot=$(pwd),out_file=total.scip -I . $(find . -name "*.proto")
+```
 
 ## transform the scip file into lsif
 
