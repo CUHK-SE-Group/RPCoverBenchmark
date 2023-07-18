@@ -8,3 +8,6 @@ node_modules
 external
 compile_commands.json
 .cache
+target
+*.output
+*.cypherl
