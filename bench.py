@@ -190,7 +190,7 @@ def performance_merge_every():
     The result is the output.csv.
     This process will be processed 20 times."""
     perf = {}
-    num = 1
+    num = 20
     perf['Ts_A'] = []
     perf['Ts_A_m'] = []
     tidy()
@@ -349,7 +349,7 @@ def performance_merge_every():
 def performance_merge_once():
     """This command will run the all process 20 times and output the report as output.csv"""
     perf = {}
-    num = 1
+    num = 20
     perf['Ts_A'] = []
     for _ in range(num):
         perf['Ts_A'].append(
