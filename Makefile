@@ -16,3 +16,9 @@ all:
 	make -C Java_A
 	make -C Java_B
 	make -C Java_C
+
+	make -C Go_A
+	make -C Go_B
+	make -C Go_C
+
+	make -C hotelReservation

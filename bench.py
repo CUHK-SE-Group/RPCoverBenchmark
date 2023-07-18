@@ -126,6 +126,8 @@ def total():
 
 
 def tidy():
+    if os.path.exists("total.scip"):
+        os.remove("total.scip")
     file = []
     file.extend(glob.glob('*.log'))
     file.extend(glob.glob('*.scip'))
@@ -188,7 +190,7 @@ def performance_merge_every():
     The result is the output.csv.
     This process will be processed 20 times."""
     perf = {}
-    num = 20
+    num = 1
     perf['Ts_A'] = []
     perf['Ts_A_m'] = []
     tidy()
@@ -334,6 +336,10 @@ def performance_merge_every():
                 prev = (cpu, mem)
                 writer.writerow([i, cpu, mem])
             else:
+                if prev[0] == 0:
+                    continue
+                if prev[1] == 0:
+                    continue
                 writer.writerow(
                     [i, cpu, mem, cpu/prev[0]*100, mem/prev[1]*100])
             cnt += 1

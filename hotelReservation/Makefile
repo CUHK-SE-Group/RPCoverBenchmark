@@ -1,5 +1,6 @@
 .PHONY: proto data run
-
+all:
+	go mod download
 proto:
 	for f in services/**/proto/*.proto; do \
 		protoc --go_out=plugins=grpc:. $$f; \
