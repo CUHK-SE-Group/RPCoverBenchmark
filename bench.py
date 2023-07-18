@@ -67,9 +67,9 @@ def gen_py_scip(project_root, output_file):
     return ["scip-python", "index", './', "--project-name", project_root, "--output", output_file]
 
 
-def gen_java_scip(project_root):
+def gen_java_scip(project_root, output_file):
     os.chdir(base_path+"/"+project_root)
-    return ["make"]
+    return ["./generate_index.sh", output_file]
 
 
 def gen_cpp_scip(project_root, output_file):
@@ -100,9 +100,9 @@ def gen_go():
 
 
 def gen_java():
-    monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.0001)
-    monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.0001)
-    monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001)
+    monitor(gen_java_scip("Java_A", "javaa.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_java_scip("Java_B", "javab.scip"), "/tmp/11111.log", 0.0001)
+    monitor(gen_java_scip("Java_C", "javac.scip"), "/tmp/11111.log", 0.0001)
     os.chdir(base_path)
 
 
@@ -271,7 +271,7 @@ def performance_merge_every():
     tidy()
     for _ in range(num):
         perf['Java_A'].append(
-            monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.0001))
+            monitor(gen_java_scip("Java_A", "javaa.scip"), "/tmp/11111.log", 0.0001))
         os.chdir(base_path)
         perf['Java_A_m'].append(total())
 
@@ -280,7 +280,7 @@ def performance_merge_every():
     tidy()
     for _ in range(num):
         perf['Java_B'].append(
-            monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.0001))
+            monitor(gen_java_scip("Java_B", "javab.scip"), "/tmp/11111.log", 0.0001))
         os.chdir(base_path)
         perf['Java_B_m'].append(total())
     perf['Java_C'] = []
@@ -288,7 +288,7 @@ def performance_merge_every():
     tidy()
     for _ in range(num):
         perf['Java_C'].append(
-            monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001))
+            monitor(gen_java_scip("Java_C", "javac.scip"), "/tmp/11111.log", 0.0001))
         os.chdir(base_path)
         perf['Java_C_m'].append(total())
     os.chdir(base_path)
@@ -381,15 +381,15 @@ def performance_merge_once():
     perf['Java_A'] = []
     for _ in range(num):
         perf['Java_A'].append(
-            monitor(gen_java_scip("Java_A"), "/tmp/11111.log", 0.0001))
+            monitor(gen_java_scip("Java_A", "javaa.scip"), "/tmp/11111.log", 0.0001))
     perf['Java_B'] = []
     for _ in range(num):
         perf['Java_B'].append(
-            monitor(gen_java_scip("Java_B"), "/tmp/11111.log", 0.0001))
+            monitor(gen_java_scip("Java_B", "javab.scip"), "/tmp/11111.log", 0.0001))
     perf['Java_C'] = []
     for _ in range(num):
         perf['Java_C'].append(
-            monitor(gen_java_scip("Java_C"), "/tmp/11111.log", 0.0001))
+            monitor(gen_java_scip("Java_C", "javac.scip"), "/tmp/11111.log", 0.0001))
     os.chdir(base_path)
     perf['Cpp_A'] = []
     for _ in range(num):

@@ -10,7 +10,7 @@ GO_OUT_DIRS=(Go_A Go_B Go_C Cpp_A Cpp_B Cpp_C Java_A Java_B Java_C Ts_A Ts_B Ts_
 TS_FOLDER=(Ts_A Ts_B Ts_C)
 GO_FOLDER=(Go_A Go_B Go_C)
 PYTHON_FOLDER=(Python_A Python_B Python_C)
-JAVA_FOLDER=(Java_A Java_B Java_C)
+JAVA_FOLDER=(Java_A/src/main/java Java_B/src/main/java Java_C/src/main/java)
 CPP_FOLDER=(Cpp_A Cpp_B Cpp_C)
 
 for file in "${GO_FOLDER[@]}"; do
