@@ -6,6 +6,6 @@ RUN apt update && apt install wget build-essential ninja-build cmake golang gcc 
 COPY third_party /opt/third_party/
 COPY . /opt/RPCoverBenchmark
 WORKDIR /opt/RPCoverBenchmark
-
+RUN apt install time
+ENV PATH="/opt/third_party/binaries:/opt/RPCoverBenchmark/venv/bin:${PATH}"
 RUN bash -c "./install.sh"
-CMD [ "source", "venv/bin/activate" ]

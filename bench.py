@@ -4,6 +4,7 @@ import glob
 import click
 import csv
 import json
+import re
 
 
 plugin_path = "/opt/third_party/binaries/protoc-gen-scip"
@@ -16,12 +17,21 @@ base_path = os.getcwd()
 
 
 def monitor(cmd: list, log_file: str, interval: float):
-    psrecord_cmd = ["psrecord", str(subprocess.Popen(
-        cmd).pid), "--log", log_file, "--interval", str(interval)]
-    subprocess.run(psrecord_cmd)
-    cpu, mem = parse_psrecord_log(log_file)
-    print(f"Time: {str(cpu)}s, Memory: {str(mem)}MB")
-    return cpu, mem
+    psrecord_cmd = ["/usr/bin/time", "-v"]+cmd
+    result = subprocess.run(psrecord_cmd, stderr=subprocess.PIPE)
+
+    message = result.stderr.decode()
+    user_time_match = re.search(r'User time \(seconds\): (\d+\.?\d*)', message)
+    max_resident_set_size_match = re.search(
+        r'Maximum resident set size \(kbytes\): (\d+)', message)
+
+    user_time = float(user_time_match.group(1)) if user_time_match else None
+    max_resident_set_size = int(max_resident_set_size_match.group(
+        1)) if max_resident_set_size_match else None
+
+    print(
+        f"Time: {str(user_time)}s, Memory: {str(max_resident_set_size//1000)}MB")
+    return user_time, max_resident_set_size//1000
 
 
 def parse_psrecord_log(log_file):
@@ -405,28 +415,6 @@ def performance_merge_once():
             cpu = sum([j[0] for j in value])/len(value)
             mem = sum([j[1] for j in value])/len(value)
             writer.writerow([i, cpu, mem])
-
-
-@cli.command()
-@click.argument('arguments')
-def time(arguments: str):
-    """This command is a general wrapper of executing command with measuring the time and peak memory.
-    There may be some cost bewteen switching processes.
-
-    Example: \n
-    $ python bench.py time "sleep 10" \n
-    Attaching to process 1965781 \n
-    Process finished (9.97 seconds)\n
-    Time: 9.969s, Memory: 0.992MB\n
-    """
-    cmd = arguments.split(' ')
-    pid = subprocess.Popen(cmd).pid
-    psrecord_cmd = ["psrecord", str(pid), "--log", "/tmp/111.log",
-                    "--interval", str(0.0001)]
-    subprocess.run(psrecord_cmd)
-    cpu, mem = parse_psrecord_log("/tmp/111.log")
-    print(f"Time: {cpu}s, Memory: {mem}MB")
-    return cpu, mem
 
 
 def vertex_stmt(label, properties: dict):
