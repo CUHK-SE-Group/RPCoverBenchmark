@@ -75,6 +75,22 @@ def gen_cpp_scip(project_root, output_file):
     os.chdir(base_path+"/"+project_root)
     return [scip_clang_path, "--compdb-path="+"build/compile_commands.json", "--index-output-path="+"../"+output_file]
 
+def gen_cpp_lsif(project_root):
+    return [os.path.join(base_path, project_root,"generate_lsif.sh")]
+
+def gen_java_lsif(project_root):
+    return [os.path.join(base_path, project_root,"generate_lsif.sh")]
+
+def gen_py_lsif(project_root):
+    return [os.path.join(base_path, project_root,"generate_lsif.sh")]
+
+def gen_ts_lsif(project_root):
+    os.chdir(os.path.join(base_path, project_root))
+    return ["lsif-tsc", "-p", "."]
+
+def gen_go_lsif(project_root):
+    return [os.path.join(base_path, project_root,"generate_lsif.sh")]
+
 
 def gen_ts():
     monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.0001)
@@ -147,6 +163,47 @@ def tidy():
 def cli():
     pass
 
+@cli.command()
+def gen_lsif():
+    perf = {}
+    perf["Cpp_A"] = monitor(gen_cpp_lsif("Cpp_A"), "/tmp/11111.log", 0.0001)
+    perf["Cpp_B"] = monitor(gen_cpp_lsif("Cpp_B"), "/tmp/11111.log", 0.0001)
+    perf["Cpp_C"] = monitor(gen_cpp_lsif("Cpp_C"), "/tmp/11111.log", 0.0001)
+
+    perf["Go_A"] = monitor(gen_go_lsif("Go_A"), "/tmp/11111.log", 0.0001)
+    perf["Go_B"] = monitor(gen_go_lsif("Go_B"), "/tmp/11111.log", 0.0001)
+    perf["Go_C"] = monitor(gen_go_lsif("Go_C"), "/tmp/11111.log", 0.0001)
+
+    perf["Python_A"] = monitor(gen_py_lsif("Python_A"), "/tmp/11111.log", 0.0001)
+    perf["Python_B"] = monitor(gen_py_lsif("Python_B"), "/tmp/11111.log", 0.0001)
+    perf["Python_C"] = monitor(gen_py_lsif("Python_C"), "/tmp/11111.log", 0.0001)
+
+    perf["Ts_A"] = monitor(gen_ts_lsif("Ts_A"), "/tmp/11111.log", 0.0001)
+    perf["Ts_B"] = monitor(gen_ts_lsif("Ts_B"), "/tmp/11111.log", 0.0001)
+    perf["Ts_C"] = monitor(gen_ts_lsif("Ts_C"), "/tmp/11111.log", 0.0001)
+    os.chdir(base_path)
+
+    with open('lsif.output.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        # for i, value in perf.items():
+        #     cnt = 0
+        # prev = None
+        for i, value in perf.items():
+            # cpu = sum([j[0] for j in value])/len(value)
+            # mem = sum([j[1] for j in value])/len(value)
+            # if cnt % 2 == 0:
+            #     prev = (cpu, mem)
+            #     writer.writerow([i, cpu, mem])
+            # else:
+            #     if prev[0] == 0:
+            #         continue
+            #     if prev[1] == 0:
+            #         continue
+                writer.writerow(
+                    [i, value[0], value[1]])
+            # cnt += 1
+
+
 
 @cli.command()
 def gen_simple_scip():
@@ -201,6 +258,7 @@ def performance_merge_every():
         perf['Ts_A'].append(
             monitor(gen_ts_scip("Ts_A", "tsa.scip"), "/tmp/11111.log", 0.0001))
         perf['Ts_A_m'].append(total())
+        tidy()
 
     perf['Ts_B'] = []
     perf['Ts_B_m'] = []
@@ -209,6 +267,7 @@ def performance_merge_every():
         perf['Ts_B'].append(
             monitor(gen_ts_scip("Ts_B", "tsb.scip"), "/tmp/11111.log", 0.0001))
         perf['Ts_B_m'].append(total())
+        tidy()
 
     perf['Ts_C'] = []
     perf['Ts_C_m'] = []
@@ -217,6 +276,7 @@ def performance_merge_every():
         perf['Ts_C'].append(
             monitor(gen_ts_scip("Ts_C", "tsc.scip"), "/tmp/11111.log", 0.0001))
         perf['Ts_C_m'].append(total())
+        tidy()
 
     os.chdir(base_path)
     perf['Python_A'] = []
@@ -228,6 +288,7 @@ def performance_merge_every():
         os.chdir(base_path)
         subprocess.run(['mv', 'Python_A/pya.scip', "."])
         perf['Python_A_m'].append(total())
+        tidy()
 
     perf['Python_B'] = []
     perf['Python_B_m'] = []
@@ -238,6 +299,7 @@ def performance_merge_every():
         os.chdir(base_path)
         subprocess.run(['mv', 'Python_B/pyb.scip', "."])
         perf['Python_B_m'].append(total())
+        tidy()
     perf['Python_C'] = []
     perf['Python_C_m'] = []
     tidy()
@@ -247,6 +309,7 @@ def performance_merge_every():
         os.chdir(base_path)
         subprocess.run(['mv', 'Python_C/pyc.scip', "."])
         perf['Python_C_m'].append(total())
+        tidy()
 
     perf['Go_A'] = []
     perf['Go_A_m'] = []
@@ -255,6 +318,7 @@ def performance_merge_every():
         perf['Go_A'].append(
             monitor(gen_go_scip('Go_A', 'Go_A', 'goa.scip'), "/tmp/11111.log", 0.0001))
         perf['Go_A_m'].append(total())
+        tidy()
     perf['Go_B'] = []
     perf['Go_B_m'] = []
     tidy()
@@ -262,6 +326,7 @@ def performance_merge_every():
         perf['Go_B'].append(
             monitor(gen_go_scip('Go_B', 'Go_B', 'gob.scip'), "/tmp/11111.log", 0.0001))
         perf['Go_B_m'].append(total())
+        tidy()
     perf['Go_C'] = []
     perf['Go_C_m'] = []
     tidy()
@@ -269,6 +334,7 @@ def performance_merge_every():
         perf['Go_C'].append(
             monitor(gen_go_scip('Go_C', 'Go_C', 'goc.scip'), "/tmp/11111.log", 0.0001))
         perf['Go_C_m'].append(total())
+        tidy()
     os.chdir(base_path)
     perf['Java_A'] = []
     perf['Java_A_m'] = []
@@ -278,6 +344,7 @@ def performance_merge_every():
             monitor(gen_java_scip("Java_A", "javaa.scip"), "/tmp/11111.log", 0.0001))
         os.chdir(base_path)
         perf['Java_A_m'].append(total())
+        tidy()
 
     perf['Java_B'] = []
     perf['Java_B_m'] = []
@@ -287,6 +354,7 @@ def performance_merge_every():
             monitor(gen_java_scip("Java_B", "javab.scip"), "/tmp/11111.log", 0.0001))
         os.chdir(base_path)
         perf['Java_B_m'].append(total())
+        tidy()
     perf['Java_C'] = []
     perf['Java_C_m'] = []
     tidy()
@@ -295,6 +363,7 @@ def performance_merge_every():
             monitor(gen_java_scip("Java_C", "javac.scip"), "/tmp/11111.log", 0.0001))
         os.chdir(base_path)
         perf['Java_C_m'].append(total())
+        tidy()
     os.chdir(base_path)
 
     perf['Cpp_A'] = []
@@ -304,6 +373,7 @@ def performance_merge_every():
         perf['Cpp_A'].append(
             monitor(gen_cpp_scip("Cpp_A", "cppa.scip"), "/tmp/11111.log", 0.0001))
         perf['Cpp_A_m'].append(total())
+        tidy()
 
     os.chdir(base_path)
 
@@ -314,6 +384,7 @@ def performance_merge_every():
         perf['Cpp_B'].append(
             monitor(gen_cpp_scip("Cpp_B", "cppa.scip"), "/tmp/11111.log", 0.0001))
         perf['Cpp_B_m'].append(total())
+        tidy()
 
     os.chdir(base_path)
 
@@ -324,6 +395,7 @@ def performance_merge_every():
         perf['Cpp_C'].append(
             monitor(gen_cpp_scip("Cpp_C", "cppa.scip"), "/tmp/11111.log", 0.0001))
         perf['Cpp_C_m'].append(total())
+        tidy()
 
     os.chdir(base_path)
 
