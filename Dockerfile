@@ -8,4 +8,4 @@ COPY . /opt/RPCoverBenchmark
 WORKDIR /opt/RPCoverBenchmark
 RUN python -m venv venv
 ENV PATH="/opt/third_party/binaries:/opt/RPCoverBenchmark/venv/bin:${PATH}"
-RUN /opt/RPCoverBenchmark/venv/bin/pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+RUN /opt/RPCoverBenchmark/venv/bin/pip install -i https://mirrors.ustc.edu.cn/pypi/web/simple -r requirements.txt
