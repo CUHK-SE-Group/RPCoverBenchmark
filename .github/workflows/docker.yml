@@ -29,3 +29,6 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/rpcover:latest
+      - name: Run tests
+        run: |
+          docker run ${{ secrets.DOCKERHUB_USERNAME }}/rpcover:latest python bench.py performance-merge-every
