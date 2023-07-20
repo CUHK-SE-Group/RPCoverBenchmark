@@ -1,3 +1,0 @@
-package packagedocumentation
-
-func AlsoExporter() {}

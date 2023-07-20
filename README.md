@@ -105,28 +105,21 @@ Run the following commands, then, a shell will be opened.
 
 ```bash
 docker build -t rpcover:latest .
-docker run -it rpcover:latest bash
+docker run -it --shm-size 1G --rm rpcover:latest bash # it needs larger shm
 ```
 
 We have generated the corresponding dependencies, so we just need to operate the `bench.py` to reproduce results.
 
-Before executing commands, the first thing you should do is activating the python venv, because our test scripts is based on the python environment.
+Before executing commands, the first thing you should do is `make all`, to prepare the test environments
 
 ```bash
-source venv/bin/activate
+make all
 ```
 
-After activating the environment, the shell should look like below, a `(venv)` symbol will appear.
-
-```
-root@93f13740a588:/opt/RPCoverBenchmark# source venv/bin/activate
-(venv) root@93f13740a588:/opt/RPCoverBenchmark#
-```
-
-There are several commands that can be used:
+There is a script, and it has several commands that can be used:
 
 ```bash
-(venv) root@93f13740a588:/opt/RPCoverBenchmark# python bench.py
+root@9bc3616506c5:/opt/RPCoverBenchmark# python bench.py
 Usage: bench.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -135,18 +128,23 @@ Options:
 Commands:
   clean                    This command remove the benchmark testing files
   convert                  This command will convert the total.scip file...
+  gen-lsif
   gen-merged-scip          This command merge and add relationshiops...
   gen-simple-scip          This command generate the base scip index file...
-  lsif2cypher
   performance-merge-every  This command will run every scip index, and...
   performance-merge-once   This command will run the all process 20 times...
-  time                     This command is a general wrapper of executing...
 ```
 
 Next, we will introduce usage of each command.
 
+### Clean
 
-### generating the orignal scip files
+This command is to make sure that there is no legacy files.
+
+```
+python bench.py clean
+```
+### Generating the orignal scip files
 
 This step will produce scip index of each service in the project root path.
 
@@ -188,7 +186,7 @@ After waiting some minutes, there will be several scip files in the project root
 ```
 
 
-### merge all the scip files and the proto files into one scip index
+### Merge all the scip files and the proto files into one scip index
 
 In this step, you can get the merged `total.scip` file together with the relationship between protobuf and generated code. The `total.scip` is merged from all the scip file generated in previous step.
 
@@ -216,12 +214,20 @@ Or in anther way, you can maually input this command in the repository root path
 /usr/bin/time -v protoc --scip_out=./ --plugin=/opt/third_party/binaries/protoc-gen-scip --scip_opt=scip_dir=./,sourceroot=$(pwd),out_file=total.scip -I . $(find . -name "*.proto")
 ```
 
-## transform the scip file into lsif
+- `/usr/bin/time -v`, a tool that can measure the memory and time usage of a command
+- `protoc`, the compiler of the protobuf
+- `--scip_out=.`, specify the output dir of the scip index file
+- ` --plugin=/opt/third_party/binaries/protoc-gen-scip`, specify the plugin it use
+- `--scip_opt=scip_dir=./,sourceroot=$(pwd),out_file=total.scip`, specify the path of scip indexes to be merged, the sourcerooot, and the output file name.
+- `-I .`, specify the proto files' root path
+- `$(find . -name "*.proto")`, match all the protobuf files in current path.
 
-To transform scip file into lsif file, you can type `python bench.py convert total.scip`, where `total.scip` is the file that we generated in the previous step.
+## Transform the scip file into lsif
+
+To transform scip file into lsif file, you can type `tool convert2lsif --from total.scip`, where `total.scip` is the file that we generated in the previous step.
 
 ```bash
-(venv) root@93f13740a588:/opt/RPCoverBenchmark# python bench.py convert total.scip
+(venv) root@93f13740a588:/opt/RPCoverBenchmark# tool convert2lsif --from total.scip
 Attaching to process 30604
 Process finished (0.19 seconds)
 Time: 0.194s, Memory: 176.023MB
@@ -242,3 +248,21 @@ Then, the default file `dump.lsif` will be output in the project root path. It i
 {"id":9,"type":"vertex","label":"moniker","identifier":"scip-proto proto protos proto3 proto/Java_C/Java_C#","kind":"export","scheme":"scip-proto"}
 {"id":10,"type":"edge","label":"moniker","inV":9,"outV":3}
 ```
+
+
+### Transform the scip file into cypherl
+
+Cypher is the query language in some popular graph databases. This command allows users to transform the index file into graph create clauses, so that users can use graph database to analyze the code dependencies.
+
+```
+tool convert2cypher --from total.scip
+```
+
+It will generate `memgraph.out` file, it contains the cypher queries that create the graph. It should look like:
+
+```
+CREATE (:document{abspath:"file:/Users/lincyaw/RPCoverBenchmark/Go_A/cmd/client.go", relpath:"cmd/client.go", lang:"go"});
+CREATE (:symbol{name:"", fullname:"scip-go gomod Go_A cb6b82253d24 Go_A/cmd/", docrelpath:"cmd/client.go"});
+MATCH (n0 {relpath:"cmd/client.go"}), (n1 {fullname:"scip-go gomod Go_A cb6b82253d24 Go_A/cmd/", docrelpath:"cmd/client.go"}) MERGE(n0)-[:contains]->(n1);
+```
+
