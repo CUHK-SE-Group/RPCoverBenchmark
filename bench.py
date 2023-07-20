@@ -237,14 +237,6 @@ def clean():
 
 
 @cli.command()
-@click.argument('arg')
-def convert(arg):
-    """This command will convert the total.scip file into dump.lsif"""
-    monitor([convert_path, "convert", "--from",
-            arg], "/tmp/11111.log", 0.0001)
-
-
-@cli.command()
 def performance_merge_every():
     """This command will run every scip index, and merge it into the total.scip index. 
     The result is the output.csv.

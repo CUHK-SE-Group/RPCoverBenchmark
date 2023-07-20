@@ -1,5 +1,9 @@
 # RPCoverBenchmark
 
+This repository serves as a benchmark for `proto-gen-scip`, a protoc plugin. The plugin generates the SCIP index file, which can be used to analyze the dependencies between codes, and even between services.
+
+The `proto-gen-scip` can be found in [https://github.com/rpcover/protoc-gen-scip](https://github.com/rpcover/protoc-gen-scip)
+
 ## Project Layout
 
 ```
@@ -20,6 +24,7 @@
 ├── Ts_C                    // typescript service c
 ├── protos                  // the protos we used
 ├── third_party             // third party binaries
+├── hotelReservation        // DeathStarBench's hotelReservation service
 ├── README.md
 ├── requirements.txt        // python dependencies
 ├── scip.proto              // proto related with scip, copied from https://github.com/sourcegraph/scip/blob/main/scip.proto
@@ -88,6 +93,11 @@ Take the first function as an example, it is named as `python-A-1`. If a functio
 |              |          | 2         | ts-C-2, java-C-2                                               |
 |              |          | 3         | python-B-2                                                     |
 
+## Steps of the benchmark
+
+1. Run the baseline tests --- generate LSIF index files
+2. Run the RPCover --- generate SCIP index file, and match the symbols in protobuf and code base.
+3. Analyze the graph result
 
 ## How to start
 
@@ -128,7 +138,7 @@ Options:
 Commands:
   clean                    This command remove the benchmark testing files
   convert                  This command will convert the total.scip file...
-  gen-lsif
+  gen-lsif                 This command will generate the baseline lsif...
   gen-merged-scip          This command merge and add relationshiops...
   gen-simple-scip          This command generate the base scip index file...
   performance-merge-every  This command will run every scip index, and...
@@ -144,7 +154,39 @@ This command is to make sure that there is no legacy files.
 ```
 python bench.py clean
 ```
-### Generating the orignal scip files
+
+
+### Generating the LSIF index files
+
+In this step, we will generate the baseline LSIF index file using corresponding LSIF indexer.
+
+```bash
+root@7d6a299a862d:/opt/RPCoverBenchmark# python bench.py gen-lsif
+[8/33] Processing file /opt/RPCoverBenchmark/Cpp_A/protos/Java_B.pb.cc
+[9/33] Processing file /opt/RPCoverBenchmark/Cpp_A/protos/message.pb.cc
+[10/33] Processing file /opt/RPCoverBenchmark/Cpp_A/protos/Ts_B.pb.cc
+```
+
+In this step, `lsif.output.csv` will be produced. It should look like as the following shows. The first column is the service name, the second column is the time used(User Time), and the third column is the peak memory in the generating process.
+
+```
+root@7d6a299a862d:/opt/RPCoverBenchmark# cat lsif.output.csv 
+Cpp_A,24.28,1205
+Cpp_B,23.77,1185
+Cpp_C,23.94,1217
+Go_A,5.83,481
+Go_B,4.72,511
+Go_C,4.62,508
+Python_A,0.0,3
+Python_B,0.0,3
+Python_C,0.0,3
+Ts_A,3.57,229
+Ts_B,3.53,223
+Ts_C,4.19,221
+```
+
+
+### Generating the orignal SCIP files
 
 This step will produce scip index of each service in the project root path.
 
