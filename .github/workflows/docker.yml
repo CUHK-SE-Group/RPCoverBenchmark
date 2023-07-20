@@ -2,7 +2,7 @@ name: Docker
 
 on:
   push:
-    branches: [main]
+    branches: [main,dev_fay]
 
 jobs:
   build-and-push:
@@ -31,4 +31,15 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/rpcover:latest
       - name: Run tests
         run: |
-          docker run ${{ secrets.DOCKERHUB_USERNAME }}/rpcover:latest python bench.py performance-merge-every
+          docker run ${{ secrets.DOCKERHUB_USERNAME }}/rpcover:latest --name test-container run_all_test.sh
+          
+      - name: Copy test results from container
+        run: |
+          mkdir test-results
+          docker cp test-container:/opt/RPCoverBenchmark/*.csv test-results/
+        
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test-results/
