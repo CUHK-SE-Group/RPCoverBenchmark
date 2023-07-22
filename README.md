@@ -405,4 +405,5 @@ WHERE n.abspath CONTAINS "Go_A" AND n.abspath CONTAINS "server" AND n.abspath !=
 RETURN p
 ```
 
+![example query](./docs/memgraph.jpg)
 
