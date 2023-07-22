@@ -167,28 +167,104 @@ root@7d6a299a862d:/opt/RPCoverBenchmark# python bench.py gen-lsif
 [10/33] Processing file /opt/RPCoverBenchmark/Cpp_A/protos/Ts_B.pb.cc
 ```
 
-In this step, `lsif.output.csv` will be produced. It should look like as the following shows. The first column is the service name, the second column is the time used(User Time), and the third column is the peak memory in the generating process.
+In this step, `lsif.output.csv` will be produced. It should look like as the following shows. The first column is the **service name**, the second column is the **time used(User Time)**, and the third column is the **peak memory in the generating process(MB)**.
 
 ```
-root@7d6a299a862d:/opt/RPCoverBenchmark# cat lsif.output.csv 
-Cpp_A,24.28,1205
-Cpp_B,23.77,1185
-Cpp_C,23.94,1217
-Go_A,5.83,481
-Go_B,4.72,511
-Go_C,4.62,508
-Python_A,0.0,3
-Python_B,0.0,3
-Python_C,0.0,3
-Ts_A,3.57,229
-Ts_B,3.53,223
-Ts_C,4.19,221
+root@da2f744fd625:/opt/RPCoverBenchmark# cat lsif.output.csv 
+Cpp_A,24.28,1219
+Cpp_B,24.16,1189
+Cpp_C,24.29,1209
+Go_A,5.54,506
+Go_B,4.99,534
+Go_C,4.7,536
+Python_A,5.73,123
+Python_B,4.22,122
+Python_C,4.3,122
+Ts_A,3.51,223
+Ts_B,3.58,224
+Ts_C,4.13,224
 ```
 
+### Benchmarking the RPCover
 
+This step will run the `performance-merge-every` 20 times, and get the average time and memory usage of RPCover.
+
+
+```
+root@7d6a299a862d:/opt/RPCoverBenchmark# python bench.py performance-merge-every
++ Ts_A (439ms)
+done /opt/RPCoverBenchmark/tsa.scip
+        Command being timed: "scip-typescript index Ts_A --output tsa.scip"
+        User time (seconds): 2.12
+        System time (seconds): 0.08
+        Percent of CPU this job got: 226%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.97
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 222304
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 3
+        Minor (reclaiming a frame) page faults: 52996
+        Voluntary context switches: 906
+        Involuntary context switches: 145
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 1264
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time: 2.12s, Memory: 222MB
+```
+
+In this step, `output.csv` will be produced. The first three column has the some meaning of `lsif.output.csv`. 
+
+The `*_m` row means the time and memory cost of `proto-gen-scip`, the rows without `_m` means the orignal `scip indexer`'s cost. 
+
+Take the first two rows as an example, it takes 2.06s and 223.0MB to generate the original SCIP index. And it takes 0.02s and 19.0MB to generate the merged 
+
+```
+root@da2f744fd625:/opt/RPCoverBenchmark# cat output.csv 
+Ts_A,2.06,223.0
+Ts_A_m,0.02,19.0,0.9708737864077669,8.520179372197308
+Ts_B,2.14,218.0
+Ts_B_m,0.02,19.0,0.9345794392523363,8.715596330275229
+Ts_C,2.1,228.0
+Ts_C_m,0.0,19.0,0.0,8.333333333333332
+Python_A,4.41,184.0
+Python_A_m,0.01,20.0,0.22675736961451248,10.869565217391305
+Python_B,4.42,183.0
+Python_B_m,0.03,20.0,0.6787330316742082,10.92896174863388
+Python_C,4.38,189.0
+Python_C_m,0.02,20.0,0.45662100456621013,10.582010582010582
+Go_A,3.54,531.0
+Go_A_m,0.04,19.0,1.1299435028248588,3.5781544256120528
+Go_B,3.57,535.0
+Go_B_m,0.04,20.0,1.1204481792717087,3.7383177570093453
+Go_C,3.43,553.0
+Go_C_m,0.03,19.0,0.8746355685131194,3.4358047016274864
+Java_A,22.38,962.0
+Java_A_m,0.06,31.0,0.2680965147453083,3.2224532224532227
+Java_B,22.53,1025.0
+Java_B_m,0.11,29.0,0.48823790501553477,2.829268292682927
+Java_C,24.12,1046.0
+Java_C_m,0.11,31.0,0.45605306799336653,2.9636711281070744
+Cpp_A,49.12,182.0
+Cpp_A_m,0.16,41.0,0.32573289902280134,22.52747252747253
+Cpp_B,48.55,179.0
+Cpp_B_m,0.17,41.0,0.3501544799176108,22.905027932960895
+Cpp_C,48.26,182.0
+Cpp_C_m,0.17,41.0,0.3522585992540407,22.52747252747253
+```
 ### Generating the orignal SCIP files
 
-This step will produce scip index of each service in the project root path.
+After executing the previous steps, we have the baseline data.
+
+In this step will produce scip index of each service in the project root path. 
 
 ```bash
 $ python bench.py gen-simple-scip
@@ -277,6 +353,7 @@ Time: 0.194s, Memory: 176.023MB
 
 Then, the default file `dump.lsif` will be output in the project root path. It is stored in json format. We can take a look into it, each line in this file is a vertex or an edge described in json format.
 
+This lsif file can be used for further integration of editor or code analyzer.
 ```bash
 (venv) root@93f13740a588:/opt/RPCoverBenchmark# head dump.lsif
 {"id":1,"version":"0.4.3","projectRoot":"file:///opt/RPCoverBenchmark","positionEncoding":"utf-8","toolInfo":{"name":"scip-clang","version":"0.2.2"},"type":"vertex","label":"metaData"}
@@ -307,4 +384,25 @@ CREATE (:document{abspath:"file:/Users/lincyaw/RPCoverBenchmark/Go_A/cmd/client.
 CREATE (:symbol{name:"", fullname:"scip-go gomod Go_A cb6b82253d24 Go_A/cmd/", docrelpath:"cmd/client.go"});
 MATCH (n0 {relpath:"cmd/client.go"}), (n1 {fullname:"scip-go gomod Go_A cb6b82253d24 Go_A/cmd/", docrelpath:"cmd/client.go"}) MERGE(n0)-[:contains]->(n1);
 ```
+
+After getting the cypherl file, you can put this file into Memgraph, or other graph databases to analyze it.
+
+In this repository, we provide a `docker-compose.yaml` to help you start the memgraph instance.
+
+```bash
+docker compose up memgraph -d
+```
+
+Then you can visit `http://localhost:3333` to check the website of Memgraph.
+
+You can click the `Import & Export` button in the side bar, and upload the file we generated. Note that you may need to change the file name with a postfix `.cypherl`.
+
+After loading the database, you can input our example query to get the relationship bewteen `Go_A` and `Java_C` service.
+
+```cypher
+MATCH p=(m:document)-[*..3]-()-[:implementation]-(:symbol)-[:contains]-(n:document)
+WHERE n.abspath CONTAINS "Go_A" AND n.abspath CONTAINS "server" AND n.abspath != m.abspath AND m.abspath CONTAINS "Java_C" AND m.abspath CONTAINS "Server"
+RETURN p
+```
+
 
