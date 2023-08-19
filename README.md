@@ -2,7 +2,7 @@
 
 This repository serves as a benchmark for `proto-gen-scip`, a protoc plugin. The plugin generates the SCIP index file, which can be used to analyze the dependencies between codes, and even between services.
 
-The `proto-gen-scip` can be found in [https://github.com/rpcover/protoc-gen-scip](https://github.com/rpcover/protoc-gen-scip)
+The `proto-gen-scip` can be found in [https://github.com/CUHK-SE-Group/protoc-gen-scip](https://github.com/CUHK-SE-Group/protoc-gen-scip)
 
 ## Project Layout
 
